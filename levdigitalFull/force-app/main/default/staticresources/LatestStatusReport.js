@@ -1,0 +1,1 @@
+window.open('{!Project__c.Clone_Status_Report_URL__c}','_self');

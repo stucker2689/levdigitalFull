@@ -1,0 +1,22 @@
+<!--
+ - Created by cmunoz on 2/7/19.
+ -->
+
+<apex:page id="DocuSignVoidEnvelope" standardcontroller="dsfs__DocuSign_Status__c">
+    <script type='text/javascript' src='/canvas/sdk/js/publisher.js'></script>
+    <script src="/soap/ajax/40.0/connection.js" type="text/javascript"></script>
+    <script src="/soap/ajax/40.0/apex.js" type="text/javascript"></script>
+
+    <script>
+        if ("{!dsfs__DocuSign_Status__c.dsfs__Envelope_Status__c}" != "Sent" && "{!dsfs__DocuSign_Status__c.dsfs__Envelope_Status__c}" != "Delivered")
+        {
+            alert("{!$Label.dsfs__statusvoidenvelopeerrormessage}");
+            window.parent.location = "/" + '{!dsfs__DocuSign_Status__c.id}';
+           //Sfdc.canvas.publisher.publish({ name: "publisher.close", payload:{ refresh: "true" }});
+        }
+        else
+        {
+            window.location.href='/apex/dsfs__DocuSignVoidEnvelopeStandAlone?e={!dsfs__DocuSign_Status__c.dsfs__DocuSign_Envelope_ID__c}'
+        }
+    </script>
+</apex:page>

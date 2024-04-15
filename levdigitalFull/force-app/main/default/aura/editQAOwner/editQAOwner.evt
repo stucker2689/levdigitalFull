@@ -1,0 +1,4 @@
+<aura:event type="COMPONENT" description="Event template">
+    <aura:attribute name="RecordToEdit" type="Object"/>
+    <aura:attribute name="KanbanRecordPosition" type="String"/>
+</aura:event>

@@ -1,0 +1,30 @@
+{
+  "d": [
+    {
+      "actualHoursTotal": {
+        "hours": 2,
+        "microseconds": 0,
+        "milliseconds": 0,
+        "minutes": 0,
+        "seconds": 0
+      },
+      "actualTimeEntryDateRange": {
+        "endDate": {
+          "day": 21,
+          "month": 2,
+          "year": 2018
+        },
+        "startDate": {
+          "day": 21,
+          "month": 2,
+          "year": 2018
+        }
+      },
+      "isClosed": false,
+      "task": {
+        "displayText": "Test Task",
+        "uri": "urn:replicon-tenant:levementum:task:1"
+      }
+    }
+  ]
+}

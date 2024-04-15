@@ -1,0 +1,165 @@
+<template>
+    <lightning-quick-action-panel header="New Status Report">
+        <div class="slds-p-around_xx-small parentDiv" >
+            <template if:true={latestStatusReport.data}>
+                <div if:false={loadingSubmition} class="slds-is-relative">
+                <div style="height: 600px;">
+                    <lightning-record-edit-form object-api-name="Status_Report__c" record-type-id={statusReportRTId} density="comfy" onsubmit={onSubmit} onsuccess={handleSuccess} onerror={handleError} class="recordEditForm">
+                        <div if:true={isError} class="slds-text-heading_small slds-box" style="background-color: red; color:white">
+                            Review the errors on this page.
+                        </div>
+                        <div if:true={isError} class="slds-text-color_destructive">
+                            PLease complete the required fields.
+                        </div>
+                        <h3 class="slds-section__title slds-theme_shade">
+                            <span class="slds-truncate slds-p-horizontal_small" title="Information">Information</span>
+                        </h3>   
+                        <br/>  
+                            <div class="slds-grid slds-gutters_x-small">
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="Name" value={latestStatusReport.data.Name} required="true"></lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="Account__c" value={latestStatusReport.data.Account__c} required="true"></lightning-input-field>
+                                </div>
+                            </div>
+                            <div class="slds-grid slds-gutters_x-small">
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="Project__c" value={recordId} required="true"></lightning-input-field>
+                                </div>
+                            </div>
+                            <div class="slds-grid slds-gutters_x-small">
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="Project_Manager__c" value={latestStatusReport.data.Project_Manager__c}></lightning-input-field>
+                                </div>
+                            </div>
+                            <div class="slds-grid slds-gutters_x-small">
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="Reporting_Period_From__c" value={latestStatusReport.data.Reporting_Period_From__c} required="true"></lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="Reporting_Period_Ending__c" value={latestStatusReport.data.Reporting_Period_Ending__c} required="true"></lightning-input-field>                   
+                                </div>
+                            </div>
+                            <div class="slds-grid slds-gutters_x-small">
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="Last_Status_Report_E_Mailed_On__c" value={latestStatusReport.data.Last_Status_Report_E_Mailed_On__c} required="true"></lightning-input-field>
+                                </div>
+                                <div class="slds-col slds-size_1-of-2">
+                                    <lightning-input-field field-name="Lev_Internal_Help_Needed__c" value={latestStatusReport.data.Lev_Internal_Help_Needed__c}></lightning-input-field>
+                                </div>
+                            </div>
+            
+                        <h3 class="slds-section__title slds-theme_shade">
+                            <span class="slds-truncate slds-p-horizontal_small" title="Project Status">Project Status</span>
+                        </h3>    
+                        <br/> 
+                        <div class="slds-grid slds-gutters_x-small">
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="Overall_Health_Value__c" value={latestStatusReport.data.Project__r.SR_Overall_Health_Value__c} disabled="true"></lightning-input-field>
+                            </div>
+                        </div>
+                        <div class="slds-grid slds-gutters_x-small">
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="Executive_Summary__c" value={latestStatusReport.data.Executive_Summary__c} required="true"></lightning-input-field>
+                            </div>
+                        </div>
+
+                        <h3 class="slds-section__title slds-theme_shade">
+                            <span class="slds-truncate slds-p-horizontal_small" title="Project Information">Project Components</span>
+                        </h3>  
+                        <br/>
+                        <div class="slds-grid slds-gutters_x-small">
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="Budget_Value__c" value={latestStatusReport.data.Project__r.SR_Budget_Value__c} disabled="true"></lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="Budget_Comments__c" value={latestStatusReport.data.Project__r.SR_Budget_Comments__c} disabled="true"></lightning-input-field>
+                            </div>
+                        </div>
+                        <div class="slds-grid slds-gutters_x-small">
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="Scope_Value__c" value={latestStatusReport.data.Project__r.SR_Scope_Value__c} disabled="true"></lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="Scope_Comments__c" value={latestStatusReport.data.Project__r.SR_Scope_Comments__c} disabled="true"></lightning-input-field>
+                            </div>
+                        </div>
+                        <div class="slds-grid slds-gutters_x-small">
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="Schedule_Value__c" value={latestStatusReport.data.Project__r.SR_Schedule_Value__c} disabled="true"></lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="Schedule_Comments__c" value={latestStatusReport.data.Project__r.SR_Schedule_Comments__c} disabled="true"></lightning-input-field>
+                            </div>
+                        </div>
+                        <h3 class="slds-section__title slds-theme_shade">
+                            <span class="slds-truncate slds-p-horizontal_small" title="Project Information">Key Accomplishments for This Period</span>
+                        </h3>  
+                        <br/>
+                        <div class="slds-grid slds-gutters_x-small">
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="Key_Accomplishments_This_Period__c" value={latestStatusReport.data.Key_Accomplishments_This_Period__c} required="true"></lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                
+                            </div>
+                        </div>
+                        <h3 class="slds-section__title slds-theme_shade">
+                            <span class="slds-truncate slds-p-horizontal_small" title="Project Information">Plans for Next Period</span>
+                        </h3>  
+                        <br/>
+                        <div class="slds-grid slds-gutters_x-small">
+                            <div class="slds-col slds-size_1-of-2">
+                                <lightning-input-field field-name="Plans_for_Next_Period__c" value={latestStatusReport.data.Plans_for_Next_Period__c}></lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-2">
+                                
+                            </div>
+                        </div>
+                    </lightning-record-edit-form>
+                </div>
+            </div>
+            <div if:true={loadingSubmition} class="slds-is-relative">
+                <br/>
+                <lightning-spinner
+                    alternative-text="Loading..." variant="brand">
+                </lightning-spinner>
+                <br/>
+            </div>
+            </template>
+            <div if:false={latestStatusReport.data} class="slds-is-relative">
+                <br/>
+                <lightning-spinner
+                    alternative-text="Loading..." variant="brand">
+                </lightning-spinner>
+                <br/>
+            </div>
+        </div>
+        <div slot="footer">
+            <lightning-layout>
+                <lightning-layout-item  size="6" >
+                    <lightning-button
+                        class="slds-float_right slds-p-right_xx-small"
+                        type="reset"
+                        label="Cancel"
+                        onclick={closeModal}
+                        disabled={isLoading}>
+                    </lightning-button>
+                </lightning-layout-item>
+
+                <lightning-layout-item size="6" >
+                    <lightning-button
+                        class="slds-float_left slds-p-left_xx-small"
+                        label="Save"
+                        type="submit"
+                        onclick={submitStatusReport}
+                        variant="brand"
+                        disabled={isLoading}>
+                    </lightning-button>
+               
+                </lightning-layout-item>
+            </lightning-layout>
+          </div>
+    </lightning-quick-action-panel>
+</template>

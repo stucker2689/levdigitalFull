@@ -1,0 +1,228 @@
+<aura:component implements="flexipage:availableForRecordHome">
+    <aura:attribute name="rec" type="object"/>
+    <aura:attribute name="recPos" type="string"/>
+    <aura:attribute name="ContactInitials" type="String"/>
+    <aura:attribute name="submittedDate" type="Date"/>
+    <aura:attribute name="sprintWeeks" type="List"/>
+    <aura:attribute name="SprintView" type="Boolean"/>
+    <aura:attribute name="OwnerColor" type="String"/>
+    <aura:attribute name="RequirementIcon" type="String"/>
+    <aura:attribute name="RequirementsIconColor" type="String"/>
+    <aura:attribute name="QaStatusColor" type="String"/>
+    <aura:attribute name="SprintViewSize" type="String" default="10"/>
+    <aura:attribute name="IsOpsView" type="Boolean"/>
+    <aura:attribute name="isInProgressStatus" type="Boolean" default="false"/>
+    <aura:attribute name="multipleSprintWeeks" type="Boolean" default="false"/>
+    <aura:attribute name="numberOfSprintWeeks" type="String" />
+    <aura:attribute name="numberOfIndexesInSprintWeeks" type="Integer"/>
+    
+    <aura:attribute name="firstTimeRendered" type="boolean" default="false"/>
+    
+    <aura:attribute name="fieldEditable" type="boolean"/>
+    <aura:attribute name="objDeletable" type="boolean"/>
+    
+    <aura:attribute name="fieldTypeMap" type="object"/>
+    
+    <aura:attribute name="namePos" type="Integer"/>
+    <aura:handler name="init" value="this" action="{!c.doInit}"/>
+    <aura:registerEvent name="highlightEditCase" type="c:highlightEditCase"/>
+    <aura:handler event="c:highlightEditCase" action="{!c.handleEditRecord}"/>
+    <aura:registerEvent name="editRecordSelected" type="c:editRecordEvent"/>
+    <aura:registerEvent name="editCaseOwner" type="c:editCaseOwner"/>
+    <aura:registerEvent name="editKanbanCaseStatus" type="c:editKanbanCaseStatus"/>
+    <aura:registerEvent name="editCaseQAStatus" type="c:editCaseQAStatus"/>
+    <lightning:quickActionAPI aura:id="quickActionAPI" />
+
+    <div aura:id="KanbanCard">
+        <lightning:layout aura:id="KanbanHeader" class="slds-m-around_xx-small">
+            <!--If it is Sprint view show this-->
+            <aura:if isTrue="{!v.SprintView}">
+                <lightning:layoutItem size="11" flexibility="no-grow">
+                    <div class="slds-truncate slds-link" id="{!v.rec.CaseId}" onclick="{!c.navToRec}" title="{!v.rec.Subject}">
+                        <b>{!v.rec.Subject}</b>
+                    </div>
+                </lightning:layoutItem>
+                <!--<lightning:layoutItem size="1" flexibility="no-grow">
+                            <lightning:icon iconName="{!v.RequirementIcon}" class="{!v.RequirementsIconColor + ' slds-float_right'}" size="x-small" title="{! 'Requirements Status: ' + v.rec.RequirementsStatus}" /> 
+                        </lightning:layoutItem>-->
+                <lightning:layoutItem size="1" flexibility="no-grow">
+                    <lightning:buttonMenu alternativeText="Toggle menu"  menuAlignment="right" iconSize="x-small" class="slds-float_right" onselect="{!c.recActionSelected}">
+                        <lightning:menuItem label="Edit" value="Edit"/>
+                        <lightning:menuItem label="Assign/Change Case Owner" value="EditCaseOwner"/>
+                        <lightning:menuItem label="Edit Case Status" value="EditCaseStatus"/>
+                        <!--<lightning:menuItem label="Change QA Status" value="ChangeQAStatus"/>-->
+                    </lightning:buttonMenu>
+                </lightning:layoutItem>
+                
+                <aura:set attribute="else">
+                    <!--If it is status view show this-->
+                    <lightning:layoutItem size="{!v.SprintViewSize}" flexibility="no-grow">
+                        <div class="slds-p-bottom_xxx-small">
+                            <!-- Iterate for first element of Sprint Week list ONLY -->
+                            <aura:iteration end="1" var="objRecord" items="{!v.sprintWeeks}" indexVar="recPos">
+                                <!-- If there is only 1 Sprint Week then round ALL corners -->
+                                <aura:if isTrue="{! recPos == v.numberOfIndexesInSprintWeeks}">                              
+                                    <b class="slds-border_top slds-border_bottom slds-p-bottom_xxx-small roundedCorners fontSmaller" 
+                                    style="{! 'text-align: center; width: 37px; height:18px; display: inline-block; color:white; background-color: ' + objRecord.color }"  title="{!objRecord.sprintWeekName}">
+                                        {!objRecord.sprintWeekName} 
+                                    </b>
+                                    <aura:set attribute="else">
+                                        <!-- If there more than 1 Sprint Week then round only the left corners -->
+                                        <b class="slds-border_top slds-border_bottom slds-p-bottom_xxx-small roundedLeftCorners fontSmaller" 
+                                        style="{! 'text-align: center; width: 37px; height:18px; display: inline-block; color:white; background-color: ' + objRecord.color }"  title="{!objRecord.sprintWeekName}">
+                                            {!objRecord.sprintWeekName}
+                                        </b>
+                                    </aura:set>
+                                </aura:if>  
+                            </aura:iteration> 
+
+                            <!-- Iterate for every element after the first-->
+                            <aura:iteration start="1" var="objRecord" items="{!v.sprintWeeks}" indexVar="recPos">
+                                <!-- If it is the last index of Sprint Weeks List -->
+                                <aura:if isTrue="{! recPos == v.numberOfIndexesInSprintWeeks}">
+                                    <b class="slds-border_top slds-border_bottom slds-p-bottom_xxx-small roundedRightCorners fontSmaller" 
+                                    style="{! 'text-align: center; width: 37px; height:18px; display: inline-block; color:white; background-color: ' + objRecord.color }"  title="{!objRecord.sprintWeekName}">
+                                        {!objRecord.sprintWeekName}
+                                    </b>
+                                    <aura:set attribute="else">
+                                        <!-- For all non Start or Ending Sprint Weeks-->
+                                        <b class="slds-border_top slds-border_bottom slds-p-bottom_xxx-small  fontSmaller" 
+                                        style="{! 'text-align: center; width: 37px; height:18px; display: inline-block;color:white; background-color: ' + objRecord.color }"  title="{!objRecord.sprintWeekName}">
+                                            {!objRecord.sprintWeekName}
+                                        </b>
+                                    </aura:set>
+                                </aura:if>
+                            </aura:iteration> 
+
+
+                            <!-- <aura:if isTrue="{!not(empty(v.sprintWeeks))}">
+                                <strong class="slds-p-left_xx-small">({!v.numberOfSprintWeeks} Sprint Weeks)</strong>
+                            </aura:if> -->
+                            <!-- **************************** End of adding dash             **************************** -->
+                        </div>
+                        <div class="slds-truncate slds-link" id="{!v.rec.CaseId}" onclick="{!c.navToRec}" title="{!v.rec.Subject}">
+                            <b>{!v.rec.Subject}</b>
+                        </div>
+                    </lightning:layoutItem>
+                    <!-- **************************** Added for QA Icon **************************** -->
+                    <!--<lightning:layoutItem size="1" flexibility="no-grow">
+                            <span class="color:green slds-align_absolute-center qa-icon" title="Feedback for QA"><b> QA</b></span>
+                        </lightning:layoutItem>-->
+                    <!-- **************************** End of QA Icon    **************************** -->
+                    <!--<aura:if isTrue="{!and(not(v.SprintView), not(v.IsOpsView))}">-->
+                    <!--<aura:if isTrue="{!not(v.IsOpsView)}">
+                        <lightning:layoutItem size="1" flexibility="no-grow">
+                            <lightning:icon iconName="{!v.RequirementIcon}" class="{!v.RequirementsIconColor + ' slds-float_right'}" size="x-small" title="{! 'Requirements Status: ' + v.rec.RequirementsStatus}" />
+                        </lightning:layoutItem>
+                    </aura:if>-->
+                    <lightning:layoutItem size="1" flexibility="no-grow">
+                    <lightning:buttonMenu alternativeText="Toggle menu"  menuAlignment="right" iconSize="x-small" class="slds-float_right" onselect="{!c.recActionSelected}">
+                        <lightning:menuItem label="Edit" value="Edit"/>
+                        <lightning:menuItem label="Assign/Change Case Owner" value="EditCaseOwner"/>
+                        <lightning:menuItem label="Edit Case Status" value="EditCaseStatus"/>
+                        <!--<aura:if isTrue="{!v.isInProgressStatus}">
+                            <lightning:menuItem label="Change QA Status" value="ChangeQAStatus"/>
+                        </aura:if>-->
+                    </lightning:buttonMenu>
+                </lightning:layoutItem>
+                </aura:set>
+            </aura:if>
+        </lightning:layout>
+
+        <!--<lightning:layout aura:id="KanbanBody">-->
+            <div class="slds-p-left_xx-small">
+                    <lightning:layout >
+                        <lightning:layoutItem size="6" flexibility="no-grow"  class="slds-text-body_small">
+                            <div>
+                                <b>Contact Name: </b>
+                            </div>
+                            <div>
+                                {!v.rec.Contact.Name}
+                            </div>
+                        </lightning:layoutItem>
+                    <lightning:layoutItem size="6" flexibility="no-grow"  class="slds-text-body_small">
+                        <div>
+                            <b>Date Submitted: </b>
+                        </div>
+                        <div>
+                            <!--<lightning:formattedDateTime value="{!v.rec.SubmittedDate}" timeZone="UTC" />-->
+                            <lightning:formattedDateTime value="{!v.rec.SubmittedDate}" />
+                        </div>                     
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </div>
+            <div class="slds-p-left_xx-small">
+                    <lightning:layout >
+                        <lightning:layoutItem size="6" flexibility="no-grow"   class="slds-text-body_small">
+                            <div>
+                                <b>Estimated Hours: </b>
+                            </div>
+                            <div>
+                                <lightning:formattedNumber value="{!v.rec.EstimatedHours}" maximumFractionDigits="2"/>
+                            </div>
+                        </lightning:layoutItem>
+                    <lightning:layoutItem size="5" flexibility="no-grow"  class="slds-text-body_small">
+                        <div>
+                            <b>Due Date: </b>
+                        </div>
+                        <div>
+                            <lightning:formattedDateTime value="{!v.rec.DueDate}" timeZone="UTC" />
+                        </div>                   
+                    </lightning:layoutItem>
+                    <!-- **************************** Added for QA Status above Case Owner Bubble **************************** -->
+                    <!-- <aura:if isTrue="{!v.isInProgressStatus}">
+                        <lightning:layoutItem size="1" flexibility="no-grow">
+                            <span class = "slds-p-right_small" style="color:green" title="Feedback for QA"><b> QA</b></span>
+                        </lightning:layoutItem>
+                    </aura:if> -->
+                    <!-- **************************** Added for QA Status **************************** -->
+                </lightning:layout>
+            </div>
+            <div class="slds-p-left_xx-small slds-p-bottom_xx-small">
+            <!-- <div class="slds-p-left_xx-small"> -->
+                <lightning:layout >                        
+                    <lightning:layoutItem size="6" flexibility="no-grow"  class="slds-text-body_small">
+                            <div>
+                                <b>Primary Department: </b>
+                            </div>
+                            <div>
+                                {!v.rec.PrimaryDepartment}
+                            </div>   
+                                
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="5" flexibility="no-grow"  class="slds-text-body_small">
+                        <div>
+                            <b>Days Case Open: </b>
+                        </div>
+                        <div>
+                            {!v.rec.DaysCaseOpen}
+                        </div> 
+                    </lightning:layoutItem>
+                    <lightning:layoutItem size="1" flexibility="no-grow"  class="slds-text-body_small">
+                        <div class=" slds-p-right_xx-small">
+                            <lightning:badge label="{!v.ContactInitials}" class="slds-badge slds-float_right" style="{! 'background-color: ' + v.OwnerColor }" title="{!v.rec.Owner.Name}"/>
+                        </div>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </div>
+            <!-- **************************** Added for QA Status Text **************************** -->
+            <!--<aura:if isTrue="{!and(v.isInProgressStatus, not(v.IsOpsView))}">
+                <div class="slds-p-left_xx-small slds-p-bottom_xx-small">
+                    <lightning:layout >
+                        
+                        <lightning:layoutItem size="12" flexibility="no-grow"  class="slds-text-body_small">   
+                            <span style="{! 'color:' + v.QaStatusColor }"> 
+                                <aura:if isTrue="{!v.rec.QaStatus == 'N/A'}">
+                                    <i><b>{!v.rec.QaStatus}</b></i>
+                                    <aura:set attribute="else">
+                                        <b>{!v.rec.QaStatus}</b>
+                                    </aura:set>
+                                </aura:if>   
+                            </span>
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </div>
+            </aura:if>-->
+            <!-- **************************** End for QA Status Text **************************** -->
+    </div>
+</aura:component>

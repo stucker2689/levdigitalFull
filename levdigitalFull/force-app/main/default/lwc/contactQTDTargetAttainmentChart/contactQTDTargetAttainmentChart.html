@@ -1,0 +1,8 @@
+<template>
+    <!--<lightning-card title="QTD Target Attainment" icon-name="utility:chart">-->
+    <lightning-card >
+        <template if:true={chartConfiguration}>
+            <c-chart chart-config={chartConfiguration} chart-height="115"></c-chart>
+        </template>
+    </lightning-card>
+</template>

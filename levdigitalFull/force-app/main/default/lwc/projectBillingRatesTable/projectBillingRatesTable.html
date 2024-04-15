@@ -1,0 +1,117 @@
+<template>
+    <div class="slds-card slds-card_boundary">
+        <article class="slds-card" style="background-color: #f3f2f2;">
+            <div class="slds-card__header slds-grid" style="padding-top:15px;padding-bottom:7px">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                <span class="slds-icon_container slds-icon-standard-contact" title="contact">
+                    <lightning-icon icon-name="standard:currency" title="Internal Project Team Members" size="small" class="greenIcon"></lightning-icon>
+                </span>
+                </div>
+                <div class="slds-media__body">
+                <h2 class="slds-card__header-title">
+                    <a class="slds-card__header-link slds-truncate" title="Card Header">
+                    <span>Project Billing Rates ({billingRateCount})</span>
+                    </a>
+                </h2>
+                </div>
+                <div class="slds-no-flex" style="justify-content:center; display:flex;">
+                    <!--<button class="slds-button slds-button_neutral" style="height:30px;" onclick={clickToCollapseAll}>Collapse All</button>
+                    <button class="slds-button slds-button_neutral" style="height:30px;" onclick={clickToExpandAll}>Expand All</button>--> 
+                    <template if:true={isCreateNewBillRatesEnabled}>        
+                        <button class="slds-button slds-button_neutral" style="height:30px;" onclick={createNewBillingRate}>New</button>
+                    </template>
+                    <button class="slds-button slds-button_neutral" style="height:30px;" onclick={fetchUpdatedData}>
+                        <lightning-icon icon-name="utility:loop" title="Refresh" size="x-small"></lightning-icon>
+                    </button>
+                    <!--<lightning-icon icon-name="utility:loop" title="Refresh" style="height:30px;" size="x-small"  onclick={fetchUpdatedData}></lightning-icon>-->
+                </div>
+            </header>
+            </div>
+            <template if:true={displayProjectBillingRatesTable}>
+                    <lightning-tree-grid
+                        columns={gridColumns}
+                        data={gridData}
+                        key-field="billingRateName"
+                        hide-checkbox-column=true>
+                    </lightning-tree-grid>
+            </template>
+            <template if:false={displayProjectBillingRatesTable}>
+                <div class="slds-is-relative" style="padding-top:25px;padding-bottom:25px">
+                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                </div>
+            </template>
+            
+            <div class="slds-card__body"></div>
+            <footer class="slds-card__footer"></footer>
+        </article>
+    </div>
+
+    <!-- Create New Placeholder Project Team Member Modal -->
+    <template if:true={openCreateNewRateModal}>
+        <!-- Modal/Popup Box LWC starts here -->
+        <section role="dialog" tabindex="-1" aria-labelledby="createNewBillingRateModalHeading" aria-modal="true" aria-describedby="createNewBillingRateModalContent" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="createNewBillRateHeader" class="slds-text-heading_medium slds-hyphenate">Create New Billing Rate</h2>
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                <div class="slds-modal__content slds-p-around_medium slds-is-relative" id="createNewlaceholderModalContentId">
+                    <template if:true={createNewBillRateIsLoading}>
+                        <lightning-spinner alternative-text="Loading" variant="brand" size="medium"></lightning-spinner>
+                    </template>
+                    <lightning-record-edit-form object-api-name="Project_Team_Member_Billing_Rate__c" onsubmit={onSubmitBillRate} onsuccess={onSuccessfulBillRateCreation}>
+                        <lightning-messages>                            
+                        </lightning-messages>
+                        <template if:true={createBillRateError}>
+                            <div class="slds-align_absolute-center" style="color:white; background-color: red;border-radius: 15px;">{createBillRateErrorMessage}</div>
+                        </template>
+                        <lightning-combobox
+                            name="Project Billing Rate Role"
+                            label="Project Billing Rate Role"
+                            value=""
+                            placeholder="Select Billing Rate to add..."
+                            options={billRateOptions}
+                            onchange={handleBillRateChange}
+                            dropdown-alignment="auto">
+                        </lightning-combobox>
+
+                        <lightning-input type="number" name="New Billing Rate Hourly Rate" label="Hourly Rate" value={newBillRateHourlyRate} formatter="currency" step="0.01" onchange={handleHourlyRateChange}></lightning-input>
+                        <!--<lightning-input-field field-name="Hourly_Rate__c" ype="number" name="New Billing Rate Hourly Rate" label="Hourly Rate" value={newBillRateHourlyRate} formatter="currency" step="0.01" onchange={handleHourlyRateChange}></lightning-input-field>-->
+
+                            <lightning-layout>
+                                <lightning-layout-item size="6" >
+                                    <lightning-button
+                                        class="slds-m-top_small slds-float_right slds-p-right_xx-small"
+                                        label="Create New"
+                                        type="submit"
+                                        variant="brand">
+                                    </lightning-button>
+                            
+                                </lightning-layout-item>
+                                <lightning-layout-item  size="6" >
+                                    <lightning-button
+                                        class="slds-m-top_small slds-float_left slds-p-left_xx-small"
+                                        type="reset"
+                                        label="Cancel"
+                                        onclick={closeModal}>
+                                    </lightning-button>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                    </lightning-record-edit-form>
+                </div>
+            </div>
+            
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+</template>

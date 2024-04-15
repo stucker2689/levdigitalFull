@@ -1,0 +1,17 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" controller="NavigationController" access="global">
+
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+    <aura:attribute name="urls"  type="SObject[]"/>
+
+	<lightning:tabset >
+        <lightning:tab label="Levementum Links">
+           <div>
+               <ul style="margin-left: 20px">
+                   <aura:iteration items="{!v.urls}" var="record"  indexVar="i">
+                        <li><a href="{!record.Url}" target="_blank">{!record.Label}</a></li>
+                    </aura:iteration>
+               </ul>
+			</div>
+        </lightning:tab>
+    </lightning:tabset>
+</aura:component>

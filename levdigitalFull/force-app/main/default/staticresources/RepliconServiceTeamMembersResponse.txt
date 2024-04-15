@@ -1,0 +1,124 @@
+{
+  "d": [
+    {
+      "billingRatesAllowedForBillingTime": [
+        {
+          "billingRate": {
+            "displayText": "Project Rate",
+            "name": "Project Rate",
+            "uri": "urn:replicon:project-specific-billing-rate"
+          },
+          "effectiveBillingRate": {
+            "asOfDate": {
+              "day": 16,
+              "month": 8,
+              "year": 2018
+            },
+            "billingRateScheduleEntryUri": "urn:replicon-tenant:levementum:project-billing-rate-schedule-entry:de78e8d0-cdf8-481b-99d9-f586eee5beb1",
+            "effectiveDate": null,
+            "endDate": null,
+            "frequency": null,
+            "value": {
+              "amount": 200,
+              "currency": {
+                "displayText": "USD$",
+                "name": "US Dollar",
+                "symbol": "USD$",
+                "uri": "urn:replicon-tenant:levementum:currency:1"
+              }
+            }
+          },
+          "isAvailableForAssignmentToTeamMembers": true
+        }
+      ],
+      "project": {
+        "displayText": "Test Project",
+        "name": "Test Project",
+        "slug": "test project",
+        "uri": "urn:replicon-tenant:levementum:project:1155"
+      },
+      "resource": {
+        "costCenter": null,
+        "department": null,
+        "displayText": "Employee1, Test",
+        "division": null,
+        "location": null,
+        "resourcePlaceholder": null,
+        "resourceType": {
+          "displayText": "User",
+          "uri": "urn:replicon:resource-type:user"
+        },
+        "serviceCenter": null,
+        "slug": "jqian",
+        "uri": "urn:replicon-tenant:levementum:user:1",
+        "user": {
+            "displayText": "Employee1, Test",
+            "loginName": "temployee1",
+            "slug": "temployee1",
+            "uri": "urn:replicon-tenant:levementum:user:1"
+          }
+      },
+      "role": null
+    },
+	{
+      "billingRatesAllowedForBillingTime": [
+        {
+          "billingRate": {
+            "displayText": "Project Rate",
+            "name": "Project Rate",
+            "uri": "urn:replicon:project-specific-billing-rate"
+          },
+          "effectiveBillingRate": {
+            "asOfDate": {
+              "day": 16,
+              "month": 8,
+              "year": 2018
+            },
+            "billingRateScheduleEntryUri": "urn:replicon-tenant:levementum:project-billing-rate-schedule-entry:de78e8d0-cdf8-481b-99d9-f586eee5beb1",
+            "effectiveDate": null,
+            "endDate": null,
+            "frequency": null,
+            "value": {
+              "amount": 200,
+              "currency": {
+                "displayText": "USD$",
+                "name": "US Dollar",
+                "symbol": "USD$",
+                "uri": "urn:replicon-tenant:levementum:currency:1"
+              }
+            }
+          },
+          "isAvailableForAssignmentToTeamMembers": true
+        }
+      ],
+      "project": {
+        "displayText": "Test Project",
+        "name": "Test Project",
+        "slug": "test project",
+        "uri": "urn:replicon-tenant:levementum:project:1155"
+      },
+      "resource": {
+        "costCenter": null,
+        "department": null,
+        "displayText": "Employee1, Test",
+        "division": null,
+        "location": null,
+        "resourcePlaceholder": null,
+        "resourceType": {
+          "displayText": "User",
+          "uri": "urn:replicon:resource-type:user"
+        },
+        "serviceCenter": null,
+        "slug": "jqian",
+        "uri": "urn:replicon-tenant:levementum:user:1",
+        "user": {
+            "displayText": "Employee2, Test",
+            "loginName": "temployee2",
+            "slug": "temployee2",
+            "uri": "urn:replicon-tenant:levementum:user:2"
+          }
+      },
+      "role": null
+    }
+  ]
+}

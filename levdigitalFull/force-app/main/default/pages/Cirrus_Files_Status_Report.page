@@ -1,0 +1,3 @@
+<apex:page standardController="Status_Report__c" tabStyle="Status_Report__c" cache="false">
+    <IGD:GDrive recordType="Status_Report__c" recordId="{!Status_Report__c.Id}"/>
+</apex:page>

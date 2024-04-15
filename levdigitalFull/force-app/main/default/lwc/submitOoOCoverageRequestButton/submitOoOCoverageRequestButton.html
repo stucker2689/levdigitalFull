@@ -1,0 +1,165 @@
+<template>
+    <lightning-quick-action-panel header="New Case: OoO Coverage Request">
+        <div class="slds-p-around_x-small parentDiv" >
+            <br/>
+            <div if:false={isLoading}>
+            <lightning-record-edit-form object-api-name="Case" record-type-id={OoORequestRecordId} density="comfy" onsubmit={onSubmit} onsuccess={handleSuccess} onerror={handleError} class="recordEditForm">
+                <div if:true={isError} class="slds-text-heading_small slds-box" style="background-color: red; color:white">
+                    Review the errors on this page.
+                </div>
+                <div if:true={isError} class="slds-text-color_destructive">
+                    These required fields must be completed: Contact Name, Description, Total Estimated Hours, Estimated Hours per Week, Out of Office End Date, Out of Office Start Date, Outstanding Responsibilities, Project Name, Resource Type, Subject, Required Skillsets for new resource
+                </div>
+                <h3 class="slds-section__title slds-theme_shade">
+                    <span class="slds-truncate slds-p-horizontal_small" title="Information">OoO Details</span>
+                </h3>   
+                <br/>  
+                    <div class="slds-grid slds-gutters_x-small">
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="OwnerId" value={levStaffingQueueId.data}></lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Status"></lightning-input-field>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters_x-small">
+                        <div class="slds-col slds-size_1-of-2">
+                            <!--<lightning-input type="text" label="Case Record Type" value="OoO Coverage Request" readonly></lightning-input>-->
+                            <lightning-input-field field-name="RecordTypeId" value={OoORequestRecordId} disabled="true"></lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Priority" ></lightning-input-field>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters_x-small">
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="CaseNumber" ></lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Subject" required="true"></lightning-input-field>                   
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters_x-small">
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Project__c" value={recordId} required="true"></lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Out_of_Office_Start_Date__c" required="true"></lightning-input-field>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters_x-small">
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="ContactId" required="true"></lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Out_of_Office_End_Date__c" required="true"></lightning-input-field>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters_x-small">
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="Contact_Division__c" ></lightning-input-field>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2">
+                            <lightning-input-field field-name="ResourceType__c" required="true"></lightning-input-field>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters_x-small">
+                        <div class="slds-col slds-size_2-of-2">
+                            <lightning-input-field field-name="Description" required="true"></lightning-input-field>
+                        </div>
+                    </div>
+    
+                <h3 class="slds-section__title slds-theme_shade">
+                    <span class="slds-truncate slds-p-horizontal_small" title="Working the Case">Working the Case</span>
+                </h3>    
+                <br/> 
+                <div class="slds-grid slds-gutters_x-small">
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input-field field-name="Link_to_Coverage_Documentation__c"></lightning-input-field>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input-field field-name="Estimated_Hours__c" required="true"></lightning-input-field>
+                    </div>
+                </div>
+                <div class="slds-grid slds-gutters_x-small">
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input-field field-name="IKT_Date__c" ></lightning-input-field>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input-field field-name="Estimated_Hours_per_Week__c" required="true"></lightning-input-field>
+                    </div>
+                </div>
+                <div class="slds-grid slds-gutters_x-small">
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input-field field-name="What_skillsets_are_required_in_the_new_r__c" required="true"></lightning-input-field>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input-field field-name="Outstandingresponsibilitiesofcurrent__c" required="true"></lightning-input-field>
+                    </div>
+                </div>
+    
+                <h3 class="slds-section__title slds-theme_shade">
+                    <span class="slds-truncate slds-p-horizontal_small" title="Project Information">Project Information</span>
+                </h3>  
+                <br/>
+                <div class="slds-grid slds-gutters_x-small">
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input-field field-name="ProjectManagerLookup__c" disabled="true"></lightning-input-field>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input-field field-name="Out_of_Office_Coverage_Resource__c" ></lightning-input-field>
+                    </div>
+                </div>
+                <div class="slds-grid slds-gutters_x-small">
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input-field field-name="Delivery_Account_Lead__c" disabled="true"></lightning-input-field>
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input-field field-name="Manager_of_Resource__c" disabled="true"></lightning-input-field>
+                    </div>
+                </div>
+                <div class="slds-grid slds-gutters_x-small">
+                    <div class="slds-col slds-size_1-of-2">
+                        
+                    </div>
+                    <div class="slds-col slds-size_1-of-2">
+                        <lightning-input-field field-name="Out_of_Office_Coverage_Resource_Manager__c" disabled="true"></lightning-input-field>
+                    </div>
+                </div>
+            </lightning-record-edit-form>
+        </div>
+        <div if:true={isLoading} class="slds-is-relative">
+            <br/>
+            <lightning-spinner
+                alternative-text="Loading..." variant="brand">
+            </lightning-spinner>
+            <br/>
+        </div>
+        </div>
+        <div slot="footer">
+            <lightning-layout>
+                <lightning-layout-item  size="6" >
+                    <lightning-button
+                        class="slds-float_right slds-p-right_xx-small"
+                        type="reset"
+                        label="Cancel"
+                        onclick={closeModal}
+                        disabled={isLoading}>
+                    </lightning-button>
+                </lightning-layout-item>
+
+                <lightning-layout-item size="6" >
+                    <lightning-button
+                        class="slds-float_left slds-p-left_xx-small"
+                        label="Save"
+                        type="submit"
+                        onclick={submitCase}
+                        variant="brand"
+                        disabled={isLoading}>
+                    </lightning-button>
+               
+                </lightning-layout-item>
+            </lightning-layout>
+          </div>
+    </lightning-quick-action-panel>
+</template>

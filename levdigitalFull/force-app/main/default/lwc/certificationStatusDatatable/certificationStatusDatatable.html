@@ -1,0 +1,225 @@
+<template>
+    <lightning-card  icon-name="standard:entitlement_policy" class="my-card slds-card_boundary">
+        <h1 slot="title" >Certification Status</h1>
+        <div slot="actions" >
+                <lightning-button variant="Neutral" label="New" onclick={createnewCert} ></lightning-button>
+        </div>
+        <template if:true={certs}>
+            <template if:true={allowScroll}>
+                <div style="height: 250px;">
+                    <lightning-datatable
+                        key-field="certId"
+                        data={certs}
+                        columns={columns}
+                        hide-checkbox-column="true">
+                    </lightning-datatable>
+                </div>
+            </template>
+            <template if:false={allowScroll}>
+                <lightning-datatable
+                        key-field="certId"
+                        data={certs}
+                        columns={columns}
+                        hide-checkbox-column="true">
+                    </lightning-datatable>
+            </template>
+        </template>                
+        <template if:true={error}>
+            No Certs for this Contact
+        </template>
+    </lightning-card> 
+
+    <template if:true={isCreateNewCertOpen}>
+        <!-- Modal/Popup Box LWC starts here -->
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">New Certification</h2>
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <div if:true={errorMessage} class="slds-align_absolute-center slds-theme_error">
+                        {errorMessage}
+                    </div>
+
+                    <div if:false={loadingSubmition} class="slds-is-relative">
+                </div>
+
+                    <div class="slds-align_absolute-center slds-p-bottom_medium">
+                        <lightning-radio-group
+                            label="Select Certification Type"
+                            options={certRecordTypeOptions}
+                            value={certRecordTypeId}
+                            onchange={handleRecordTypeSelectionChange}
+                            required
+                        >
+                        </lightning-radio-group>
+                    </div>
+
+                    <div slot="footer">
+                        <lightning-layout>
+                            <lightning-layout-item  size="6" >
+                                <lightning-button
+                                    class="slds-float_right slds-p-right_xx-small"
+                                    type="reset"
+                                    label="Cancel"
+                                    onclick={closeModal}
+                                    disabled={isLoading}>
+                                </lightning-button>
+                            </lightning-layout-item>
+            
+                            <lightning-layout-item size="6" >
+                                <lightning-button
+                                    class="slds-float_left slds-p-left_xx-small"
+                                    label="Next"
+                                    onclick={certRecordTypeSelected}
+                                    variant="brand">
+                                </lightning-button>
+                           
+                            </lightning-layout-item>
+                        </lightning-layout>
+                      </div>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <template if:true={isRecordTypeSelectionDone}>
+            <!-- Modal/Popup Box LWC starts here -->
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+                <div class="slds-modal__container">
+                    <!-- Modal/Popup Box LWC header here -->
+                    <header class="slds-modal__header">
+                        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeCertCreationModal}>
+                            <lightning-icon icon-name="utility:close"
+                                alternative-text="close"
+                                variant="inverse"
+                                size="small" ></lightning-icon>
+                            <span class="slds-assistive-text">Close</span>
+                        </button>
+                        <h2 id="modal-heading-02" class="slds-text-heading_medium slds-hyphenate">New Certification</h2>
+                    </header>
+                    <!-- Modal/Popup Box LWC body starts here -->
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-2">
+                        <div if:true={errorMessage} class="slds-align_absolute-center slds-theme_error">
+                            {errorMessage}
+                        </div>
+    
+                        <div if:false={loadingSubmition} class="slds-is-relative">
+                        <lightning-record-edit-form object-api-name="Certification__c" record-type-id={certRecordTypeId} density="comfy" onsubmit={onSubmit} onsuccess={handleSuccess} onerror={handleError} class="recordEditForm">
+                            <div if:true={isError} class="slds-text-heading_small slds-box" style="background-color: red; color:white">
+                                Review the errors on this page.
+                            </div>
+                            <div if:true={isError} class="slds-text-color_destructive">
+                                Please complete the required fields.
+                            </div>
+                            <h3 class="slds-section__title slds-theme_shade">
+                                <span class="slds-truncate slds-p-horizontal_small" title="Information">Information</span>
+                            </h3>   
+                            <br/>  
+                                <div class="slds-grid slds-gutters_x-small">
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <lightning-input-field field-name="Employee__c" value={recordId} required="true"></lightning-input-field>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <lightning-input-field field-name="Status__c" ></lightning-input-field>
+                                    </div>
+                                </div>
+                                <div class="slds-grid slds-gutters_x-small">
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <lightning-input-field field-name="Type__c" ></lightning-input-field>
+                                    </div>
+                                    <template if:true={isMagnetoCert}>
+                                        <div class="slds-col slds-size_1-of-2">
+                                            <lightning-input-field field-name="Score__c" ></lightning-input-field>
+                                        </div>
+                                    </template>
+                                </div>
+                                <div class="slds-grid slds-gutters_x-small">
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <lightning-input-field field-name="Planned_Date__c" ></lightning-input-field>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <lightning-input-field field-name="Date_Certified__c" ></lightning-input-field>                   
+                                    </div>
+                                </div>
+                                <template if:false={isMagnetoCert}>
+                                    <div class="slds-grid slds-gutters_x-small">
+                                        <div class="slds-col slds-size_1-of-2">
+                                            <lightning-input-field field-name="Maintenance_Exam__c" ></lightning-input-field>
+                                        </div>
+                                        <template if:true={isSFDCCert}>
+                                            <div class="slds-col slds-size_1-of-2">
+                                                <lightning-input-field field-name="MaintenanceExamDate__c" ></lightning-input-field>                   
+                                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                                <div class="slds-grid slds-gutters_x-small">
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <lightning-input-field field-name="Deadline_Date__c" ></lightning-input-field>
+                                    </div>
+                                </div>
+                        </lightning-record-edit-form>
+                    </div>
+    
+                        <div if:true={isLoading} class="slds-is-relative">
+                            <br/>
+                            <lightning-spinner
+                                alternative-text="Loading..." variant="brand">
+                            </lightning-spinner>
+                            <br/>
+                        </div>
+    
+                        <div if:true={loadingSubmition} class="slds-is-relative">
+                            <br/>
+                            <lightning-spinner
+                                alternative-text="Loading..." variant="brand">
+                            </lightning-spinner>
+                            <br/>
+                        </div>
+    
+                        <div slot="footer">
+                            <lightning-layout>
+                                <lightning-layout-item  size="6" >
+                                    <lightning-button
+                                        class="slds-float_right slds-p-right_xx-small"
+                                        type="reset"
+                                        label="Cancel"
+                                        onclick={closeCertCreationModal}
+                                        disabled={isLoading}>
+                                    </lightning-button>
+                                </lightning-layout-item>
+                
+                                <lightning-layout-item size="6" >
+                                    <lightning-button
+                                        class="slds-float_left slds-p-left_xx-small"
+                                        label="Save"
+                                        type="submit"
+                                        onclick={submitCert}
+                                        variant="brand"
+                                        disabled={disableSave}>
+                                    </lightning-button>
+                               
+                                </lightning-layout-item>
+                            </lightning-layout>
+                          </div>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+
+
+    
+</template>

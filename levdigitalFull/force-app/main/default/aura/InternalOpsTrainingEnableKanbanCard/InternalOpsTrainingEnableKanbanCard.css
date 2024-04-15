@@ -1,0 +1,101 @@
+.THIS {
+    transition: background-color 0.3s;
+    /*padding: 0.45rem;*/
+}
+.THIS .slds-link{
+    color: #0070d2;
+    text-decoration: none;
+    transition: color 0.1s linear;
+    cursor: pointer;
+}
+.THIS .slds-link:hover{
+    text-decoration: underline;
+}
+.THIS .floatRight{
+    float: right;
+    cursor: pointer;
+}
+.THIS .newCardColor, .THIS.newCardColor{
+    background: #d9ffdf !important;
+}
+.THIS img{
+    margin: 0px;
+}
+.THIS .purpleBackground{
+    background-color: #9bc63b;
+}
+.THIS .small {
+    
+    transform: scale(0.95, 0.95);
+    -ms-transform: scale(0.95, 0.95); /* IE 9*/
+    -webkit-transform: scale(0.95, 0.95); /* Safari and Chrome */
+    -o-transform: scale(0.95, 0.95); /* Opera */
+    -moz-transform: scale(0.95, 0.95); /* Firefox */
+  }
+
+.THIS .medium {    
+    transform: scale(0.85, 0.85);
+    -ms-transform: scale(0.85, 0.85); /* IE 9*/
+    -webkit-transform: scale(0.85, 0.85); /* Safari and Chrome */
+    -o-transform: scale(0.85, 0.85); /* Opera */
+    -moz-transform: scale(0.85, 0.85); /* Firefox */
+  }
+.THIS .large {
+    transform: scale(1.15, 1.15);
+    -ms-transform: scale(1.15, 1.15); /* IE 9*/
+    -webkit-transform: scale(1.15, 1.15); /* Safari and Chrome */
+    -o-transform: scale(1.15, 1.15); /* Opera */
+    -moz-transform: scale(1.15, 1.15); /* Firefox */
+}
+.THIS .fontsmall{
+    font-size: x-small;
+}
+
+  .THIS .left-align {
+    text-align: left;
+}
+.THIS .right-align {
+    text-align: right;
+}
+.THIS .fontSmaller{
+    font-size: 0.725rem;
+}
+.THIS .green{
+    --sds-c-icon-color-foreground-default: green; 
+}
+.THIS .red{
+    --sds-c-icon-color-foreground-default: red; 
+}
+.THIS .orange{
+    --sds-c-icon-color-foreground-default: orange; 
+}
+.THIS .yellow{
+    --sds-c-icon-color-foreground-default: gold; 
+}
+.THIS .comments-icn{
+    --sds-c-icon-color-foreground-default: green; 
+}
+.THIS.redText {
+    --sds-c-icon-color-foreground-default: red; 
+}
+/*QA Icon Style*/
+.THIS  .text-shadow{
+    text-shadow: 0px 1px 1px #4d4d4d;
+	color: rgb(171, 171, 50);
+	font: 'LeagueGothicRegular';
+    text-align: center;
+}
+.THIS .three-d-text{
+    /*color: green;*/
+	text-shadow: 0px 1px 0px #999, 0px 2px 0px #888, 0px 3px 0px #777, 0px 4px 0px #666, 0px 5px 0px #555, 0px 6px 0px #444, 0px 7px 0px #333, 0px 8px 7px #001135;
+	font: 'ChunkFiveRegular';
+}
+.THIS .roundedCorners{
+    border-radius: 25px;      
+}
+.THIS .roundedRightCorners{
+    border-radius: 0px 25px 25px 0px;      
+}
+.THIS .roundedLeftCorners{
+    border-radius: 25px 0px 0px 25px;      
+}

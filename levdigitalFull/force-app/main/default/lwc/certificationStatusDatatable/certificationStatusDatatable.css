@@ -1,0 +1,10 @@
+.my-card {
+    display: block;
+    background-color: #F3F3F3;
+}
+.THIS .slds-card__header{
+    background-color: #F3F3F3;
+}
+:host {
+    --sds-c-card-color-background: #F3F3F3;
+}

@@ -1,0 +1,559 @@
+<template> 
+    <div class="slds-card slds-card_boundary" style="background-color: #f3f2f2;">
+        <!--<article class="slds-card" style="background-color: #f3f2f2;">-->
+        <div class="slds-card__header slds-grid" style="padding-top:15px;padding-bottom:7px">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                <span class="slds-icon_container slds-icon-standard-contact" title="contact">
+                    <lightning-icon icon-name="standard:avatar" title="Internal Project Team Members" size="small"></lightning-icon>
+                </span>
+                </div>
+                <div class="slds-media__body">
+                <h2 class="slds-card__header-title">
+                    <a class="slds-card__header-link slds-truncate" title="Internal Project Team Member Detail Table">
+                    <span>Internal Project Team Members ({internalProjectTeamMemberCount})</span>
+                    </a>
+                </h2>
+                </div>
+                <div class="slds-no-flex" style="justify-content:center; display:flex;">
+                <template if:true={isCreateNewTeamMemberEnabled}>
+                    <button class="slds-button slds-button_neutral" style="height:30px;" onclick={createNewProjectTeamMember}>New</button>
+                    <button class="slds-button slds-button_brand" style="height:30px;" onclick={handleAddPlaceholderClick}>Create Placeholder</button>
+                </template>
+                <button class="slds-button slds-button_neutral" style="height:30px;" onclick={refreshTableDate}>
+                    <lightning-icon icon-name="utility:loop" title="Refresh" size="x-small"></lightning-icon>
+                </button>
+                
+                </div>
+            </header>
+        </div>
+        <template if:true={displayTeamMemberTable}>
+            <template if:true={relatedProjectTeamMembers.data}>
+                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                    <thead>
+                        <tr style="padding-top:60px;padding-bottom:60px">
+                            <th>
+                                <b>Project Team Member Name</b>
+                            </th>
+                            <th>
+                                <b>Assigned Billing Rate</b>
+                            </th>
+                            <th>
+                                <b title="The Date that the listed Assigned Billing Rate takes affect for the Project Team Member">Effective Date</b>
+                            </th>
+                            <!--<th>
+                                <b title="The Date that the listed Assigned Billing Rate will stop taking affect and another will replace it for the Project Team Member">Effective Until</b>
+                            </th>-->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={relatedProjectTeamMembers.data} for:item="projectTeamMember" for:index="index">
+                            <tr key={projectTeamMember.ptmId} style={projectTeamMember.placeholderStyleClass}>
+                                <!-- Assigned Billing Rate Column for Placeholder Project Team Members -->
+                                <template if:true={projectTeamMember.isPlaceholderEmployee}>
+                                    <td>
+                                        <template if:true={isCreateNewTeamMemberEnabled}>
+                                            <lightning-icon class="slds-p-right_medium" style="float:left" icon-name="utility:close" alternative-text="Delete" title="Delete" data-index={index} onclick={deleteProjTeamMember} size="x-small"></lightning-icon>
+                                        </template>
+                                        <a onclick={swapPlaceholderForUser} data-index={index}>{projectTeamMember.name}</a>
+                                    </td>
+
+                                    <td lwc:if={projectTeamMember.needsBillingRateAssignment} style="color:red">       
+                                        <a onclick={updateBillRateClickHandle} data-index={index}>{projectTeamMember.billingRateNameAndRate}</a>
+                                        <!--<template if:true={isCreateNewTeamMemberEnabled}>
+                                            <lightning-icon style="float:right" icon-name="utility:close" alternative-text="Delete" title="Delete" data-index={index} onclick={deleteProjTeamMember} size="x-small"></lightning-icon>
+                                        </template>-->
+                                    </td>
+                                    <td lwc:else>       
+                                        <a onclick={updateBillRateClickHandle} data-index={index}>{projectTeamMember.billingRateNameAndRate}</a>
+                                        <!--<template if:true={isCreateNewTeamMemberEnabled}>
+                                            <lightning-icon style="float:right" icon-name="utility:close" alternative-text="Delete" title="Delete" data-index={index} onclick={deleteProjTeamMember} size="x-small"></lightning-icon>
+                                        </template>-->
+                                    </td>
+                                </template>
+
+                                <!-- Assigned Billing Rate Column for Non-Placeholder Project Team Members -->
+                                <template if:false={projectTeamMember.isPlaceholderEmployee}>                              
+                                    <td>
+                                        <template if:true={isCreateNewTeamMemberEnabled}>
+                                            <lightning-icon class="slds-p-right_medium" style="float:left slds-p-right_medium" icon-name="utility:close" alternative-text="Delete" title="Delete" data-index={index} onclick={deleteProjTeamMember} size="x-small"></lightning-icon>
+                                        </template>
+                                        <a href={projectTeamMember.nameUrl}>{projectTeamMember.ptmFormattedName}</a>
+                                    </td>
+                                    <td lwc:if={projectTeamMember.needsBillingRateAssignment}>       
+                                        <a onclick={updateBillRateClickHandle} data-index={index} data-needs-rate={projectTeamMember.needsBillingRateAssignment} style="color:red">{projectTeamMember.billingRateNameAndRate}</a>
+                                        <!--<template if:true={isCreateNewTeamMemberEnabled}>
+                                            <lightning-icon style="float:right" icon-name="utility:close" alternative-text="Delete" title="Delete" data-index={index} onclick={deleteProjTeamMember} size="x-small"></lightning-icon>
+                                        </template>-->
+                                    </td>
+                                    <td lwc:else >       
+                                        <a onclick={updateBillRateClickHandle} data-index={index} data-needs-rate={projectTeamMember.needsBillingRateAssignment}>{projectTeamMember.billingRateNameAndRate}</a>
+                                        <!--<template if:true={isCreateNewTeamMemberEnabled}>
+                                            <lightning-icon style="float:right" icon-name="utility:close" alternative-text="Delete" title="Delete" data-index={index} onclick={deleteProjTeamMember} size="x-small"></lightning-icon>
+                                        </template>-->
+                                    </td>
+                                </template>
+
+                                <td lwc:if={projectTeamMember.hasEffectiveDate}>
+                                    {projectTeamMember.effectiveRateRangeString}
+                                    <template if:true={projectTeamMember.hasEffectiveRates}>
+                                        <div class="slds-form-element__icon slds-p-right_x-small" style="float:right">
+                                            <button class="slds-button slds-button_icon" onmouseover={showEffectiveRatePopup}
+                                                onmouseout={hideEffectiveRatePopup} data-ptm-id={projectTeamMember.ptmId}>
+                                                <lightning-icon icon-name="utility:info" alternative-text="Info" size="xx-small"
+                                                    title="">
+                                                </lightning-icon>
+                                            </button>
+                                            <div class="slds-popover slds-popover_large slds-popover_tooltip slds-nubbin_bottom-right slds-fall-into-ground slds-hide" role="tooltip" id={projectTeamMember.ptmId} data-unique-id={projectTeamMember.ptmId}
+                                            style={projectTeamMember.effectiveRateListStyle}>
+                                                <div class="slds-popover__body">
+                                                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>
+                                                                    <b>Bill Rate</b>
+                                                                </th>
+                                                                <th>
+                                                                    <b>Effective Date</b>
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <template for:each={projectTeamMember.effectiveRateList} for:item="effectiveRate" for:index="index">
+                                                                <tr key={effectiveRate.effectiveRateId}>
+                                                                    <td style="color:black">
+                                                                        {effectiveRate.effectiveRateAndHourlyRateName}
+                                                                    </td>
+                                                                    <td>
+                                                                        <div style="color:black">
+                                                                            {effectiveRate.effectiveDateString}
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </template>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </td>
+                                <td lwc:else>
+                                    <i style="color:rgb(150, 150, 150); font-size:0.9em;">{projectTeamMember.effectiveRateRangeString}</i>
+                                    <template if:true={projectTeamMember.hasEffectiveRates}>
+                                        <div class="slds-form-element__icon slds-p-right_x-small" style="float:right">
+                                            <button class="slds-button slds-button_icon" onmouseover={showEffectiveRatePopup}
+                                                onmouseout={hideEffectiveRatePopup} data-ptm-id={projectTeamMember.ptmId}>
+                                                <lightning-icon icon-name="utility:info" alternative-text="Info" size="xx-small"
+                                                    title="">
+                                                </lightning-icon>
+                                            </button>
+                                            <div class="slds-popover slds-popover_large slds-popover_tooltip slds-nubbin_bottom-right slds-fall-into-ground slds-hide" role="tooltip" id={projectTeamMember.ptmId} data-unique-id={projectTeamMember.ptmId}
+                                                style={projectTeamMember.effectiveRateListStyle}>
+                                                <div class="slds-popover__body">
+                                                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>
+                                                                    <b>Bill Rate</b>
+                                                                </th>
+                                                                <th>
+                                                                    <b>Effective Date</b>
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <template for:each={projectTeamMember.effectiveRateList} for:item="effectiveRate" for:index="index">
+                                                                <tr key={effectiveRate.effectiveRateId}>
+                                                                    <td style="color:black">
+                                                                        {effectiveRate.effectiveRateAndHourlyRateName}
+                                                                    </td>
+                                                                    <td>
+                                                                        <div style="color:black">
+                                                                            {effectiveRate.effectiveDateString}
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </template>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </td>
+                            </tr>                            
+                        </template>
+                    </tbody>
+                </table>
+            </template>
+        </template>
+            <template if:false={displayTeamMemberTable}>
+                <div class="slds-is-relative" style="padding-top:25px;padding-bottom:25px">
+                    <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+                </div>
+            </template>
+            
+            <div class="slds-card__body"></div>
+            <footer class="slds-card__footer"></footer>
+        <!--</article>-->
+    </div>
+
+
+
+    <template if:true={isCreateNewTeamMemberModalOpen}>
+        <!-- Modal/Popup Box LWC starts here -->
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeCreateTeamMemberModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Create New Internal Project Team Member</h2>
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                <div class="slds-modal__content slds-p-around_medium slds-is-relative" id="modal-content-id-1">
+                    <template if:true={showRefreshOnProjectTeamMembersForm}>
+                        <lightning-spinner alternative-text="Loading" variant="brand" size="medium"></lightning-spinner>
+                    </template>
+                        <lightning-record-edit-form object-api-name="Client_Contact__c" onsubmit={onSubmitNewProjectTeamMember} onsuccess={onSuccessfulCreateNewTeamMember}>
+                            <lightning-messages>                            
+                            </lightning-messages>
+                            <template if:true={errorMessage}>
+                                <div class="slds-align_absolute-center" style="color:white; background-color: red;border-radius: 15px;">{errorMessage}</div>
+                            </template>
+                            <lightning-input-field field-name="Client_Contact__c" onchange={handleNewInternalProjectTeamMemberChange} required>
+                            </lightning-input-field>
+                            <lightning-combobox
+                                name="Assigned Billing Rate"
+                                label="Assigned Billing Rate"
+                                value=""
+                                placeholder="Select Billing Rate for Team Member..."
+                                options={billingRates}
+                                onchange={handleBillRateChange}
+                                dropdown-alignment="auto"
+                                required>
+                            </lightning-combobox>
+                                <lightning-layout>
+                                    <lightning-layout-item size="6" >
+                                        <lightning-button
+                                            class="slds-m-top_small slds-float_right slds-p-right_xx-small"
+                                            label="Create new"
+                                            type="submit"
+                                            variant="brand">
+                                        </lightning-button>
+                                
+                                    </lightning-layout-item>
+                                    <lightning-layout-item  size="6" >
+                                        <lightning-button
+                                            class="slds-m-top_small slds-float_left slds-p-left_xx-small"
+                                            type="reset"
+                                            label="Cancel"
+                                            onclick={closeCreateTeamMemberModal}>
+                                        </lightning-button>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                        </lightning-record-edit-form>
+                    
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+
+
+    <template if:true={isUpdateBillingRateModalOpen}>
+        <!-- Modal/Popup Box LWC starts here -->
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="modal-heading-02" class="slds-text-heading_medium slds-hyphenate">Update Assigned Billing Rate for <b>{selectedTeamMemberForBillRateUpdate.employeeName}</b></h2>
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                <div class="slds-modal__content slds-p-around_medium slds-is-relative" id="modal-content-id-2">
+                    <template if:true={updateBillRateIsLoading}>
+                        <lightning-spinner alternative-text="Loading" variant="brand" size="medium"></lightning-spinner>
+                    </template>
+                    <lightning-messages>                            
+                    </lightning-messages>
+                    <template if:true={updateBillingRateError}>
+                        <div class="slds-align_absolute-center slds-p-around_x-small" style="color:white; background-color: red;border-radius: 15px; text-align:center;">{updateBillingRateErrorMessage}</div>
+                    </template>
+                        <lightning-combobox lwc:if={selectedTeamMemberForBillRateUpdate.isPlaceholderEmployee}
+                            name="Placeholder Role"
+                            label="Placeholder Role"
+                            value=""
+                            placeholder="Select Role for Placeholder..."
+                            options={placeholderRoles}
+                            onchange={handlePlaceholderRoleChange}
+                            dropdown-alignment="auto"
+                            required>
+                        </lightning-combobox>
+                        <lightning-combobox lwc:else
+                            name="Assigned Billing Rate"
+                            label="Assigned Billing Rate"
+                            value={assignedBillingRate}
+                            placeholder="Select Billing Rate for Team Member..."
+                            options={billingRates}
+                            onchange={handleBillRateUpdateChange}
+                            dropdown-alignment="auto"
+                            required>
+                        </lightning-combobox>
+
+
+                        <lightning-input lwc:if={displaySetEffectiveRateCheckbox} 
+                            class="slds-p-top_small" type="checkbox" name="Set Effective Date Checkbox"  
+                            value=""
+                            onchange={handleSetEffectiveDateChange} 
+                            field-level-help="If setting a bill rate for all of this Project Team Member's time then this should remain unchecked."
+                            label="Set Effective Date for when this Bill Rate will be applied to incoming time for this Team Member">
+                        </lightning-input>
+
+                        <template if:true={showEffectiveDateSelection}>
+                            <lightning-input type="date" 
+                                class="slds-p-top_small"
+                                label="Effective Date" 
+                                field-level-help="Set the date that the above selected Project Billing Rate will start to be used as the Billing Rate for any incoming time for the selected Project Team Member. If a future date is selected then the assigned billing rate will not be applied until the date entered. If a date in the past is entered, then existing time entries will have their Billing Rate switched to this new Billing Rate for Entries with dates equal to and greater than the entered effective date."
+                                onchange={effectiveDateSelectionChange}
+                                value={selectedEffectiveDate}>
+                            </lightning-input>
+                        </template>
+
+                        <lightning-layout>
+                            <lightning-layout-item size="6" >
+                                <lightning-button
+                                    class="slds-m-top_small slds-float_right slds-p-right_xx-small"
+                                    label="Save"
+                                    type="submit"
+                                    variant="brand"
+                                    onclick={submitAssignedBillRateUpdate}>
+                                </lightning-button>
+                            
+                            </lightning-layout-item>
+                            <lightning-layout-item  size="6" >
+                                <lightning-button
+                                    class="slds-m-top_small slds-float_left slds-p-left_xx-small"
+                                    type="reset"
+                                    label="Cancel"
+                                    onclick={closeModal}>
+                                </lightning-button>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+   
+
+
+    <!-- Create New Placeholder Project Team Member Modal -->
+    <template if:true={openAddPlaceholderModal}>
+        <!-- Modal/Popup Box LWC starts here -->
+        <section role="dialog" tabindex="-1" aria-labelledby="createNewPlaceholderProjectTeamMemberModalHeading" aria-modal="true" aria-describedby="createNewPlaceholderProjectTeamMemberModalContent" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="createNewPlaceholderHeader" class="slds-text-heading_medium slds-hyphenate">Create New Placeholder Team Member</h2>
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                <div class="slds-modal__content slds-p-around_medium slds-is-relative" id="createNewlaceholderModalContentId">
+                    <template if:true={createPlaceholderIsLoading}>
+                        <lightning-spinner alternative-text="Loading" variant="brand" size="medium"></lightning-spinner>
+                    </template>
+                    <lightning-record-edit-form object-api-name="Client_Contact__c" onsubmit={onSubmitPlaceholder} onsuccess={onSuccessfulPlaceholderCreation}>
+                        <lightning-messages>                            
+                        </lightning-messages>
+                        <template if:true={addPlaceholderError}>
+                            <div class="slds-align_absolute-center" style="color:white; background-color: red;border-radius: 15px;">{addPlaceholderErrorMessage}</div>
+                        </template>
+                        <lightning-input-field field-name="Client_Contact__c" value="0030W00003hn6LpQAI" disabled="true">
+                        </lightning-input-field>
+                        <lightning-combobox
+                            name="Placeholder Role"
+                            label="Placeholder Role"
+                            value=""
+                            placeholder="Select Role for Placeholder..."
+                            options={placeholderRoles}
+                            onchange={handlePlaceholderRoleChange}
+                            dropdown-alignment="auto"
+                            required>
+                        </lightning-combobox>
+                            <lightning-layout>
+                                <lightning-layout-item size="6" >
+                                    <lightning-button
+                                        class="slds-m-top_small slds-float_right slds-p-right_xx-small"
+                                        label="Create new"
+                                        type="submit"
+                                        variant="brand">
+                                    </lightning-button>
+                            
+                                </lightning-layout-item>
+                                <lightning-layout-item  size="6" >
+                                    <lightning-button
+                                        class="slds-m-top_small slds-float_left slds-p-left_xx-small"
+                                        type="reset"
+                                        label="Cancel"
+                                        onclick={closeModal}>
+                                    </lightning-button>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                    </lightning-record-edit-form>
+                </div>
+            </div>
+            
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <!-- Swap Placeholder For User Modal -->
+    <template if:true={openSwapPlaceholderForUserModal}>
+        <!-- Modal/Popup Box LWC starts here -->
+        <section role="dialog" tabindex="-1" aria-labelledby="swapPlaceholderForUserModalHeading" aria-modal="true" aria-describedby="swapPlaceholderForUserModalContent" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="swapPlaceholderForUserHeader" class="slds-text-heading_medium slds-hyphenate">Swap User to Project</h2>
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                <div class="slds-modal__content slds-p-around_medium slds-is-relative" id="swapPlaceholderForUserModalContentId">
+                    <template if:true={swapPlaceholderForUserIsLoading}>
+                        <lightning-spinner alternative-text="Loading" variant="brand" size="medium"></lightning-spinner>
+                    </template>
+                    <lightning-record-edit-form object-api-name="Client_Contact__c" onsubmit={onSubmitSwapPlaceholderForUser}>
+                        <lightning-messages>                            
+                        </lightning-messages>
+                        <template if:true={swapPlaceholderForUserError}>
+                            <div class="slds-align_absolute-center slds-p-around_x-small" style="color:white; background-color: red;border-radius: 15px; text-align:center;">{swapPlaceholderForUserErrorMessage}</div>
+                        </template>
+                        <lightning-input-field field-name="Client_Contact__c" onchange={handleSwapPlaceholderForUserChange} required>
+                        </lightning-input-field>
+                        <lightning-input-field field-name="Assigned_Billing_Rate__c" value={selectedPlaceholderToSwapBillRateId} disabled="true">
+                        </lightning-input-field>
+                        <template if:true={showPlaceholderReplacementBillRateInput}>
+                            <lightning-combobox
+                                name="Existing Billing Rate(s) for Assignment"
+                                label="Existing Billing Rate(s) for Assignment"
+                                value=""
+                                placeholder="Select Billing Rate for Team Member..."
+                                options={billingRates}
+                                onchange={handleBillRateChangeForPlaceholderSwapReplacement}
+                                dropdown-alignment="auto"
+                                required>
+                            </lightning-combobox>
+
+                        </template>
+
+                            <lightning-layout>
+                                <lightning-layout-item size="6" >
+                                    <lightning-button
+                                        class="slds-m-top_small slds-float_right slds-p-right_xx-small"
+                                        label="Save"
+                                        type="submit"
+                                        variant="brand">
+                                    </lightning-button>
+                            
+                                </lightning-layout-item>
+                                <lightning-layout-item  size="6" >
+                                    <lightning-button
+                                        class="slds-m-top_small slds-float_left slds-p-left_xx-small"
+                                        type="reset"
+                                        label="Cancel"
+                                        onclick={closeModal}>
+                                    </lightning-button>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                    </lightning-record-edit-form>
+                </div>
+            </div>            
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <!-- Delete Project Team Member Confirmation Modal -->
+    <template if:true={openDeleteProjectTeamMemberConfirmationModal}>
+        <!-- Modal/Popup Box LWC starts here -->
+        <section role="dialog" tabindex="-1" aria-labelledby="deleteProjTeamMemberModalHeading" aria-modal="true" aria-describedby="deleteProjTeamMemberModalContent" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="deleteProjTeamMemberHeader" class="slds-text-heading_medium slds-hyphenate">Delete Internal Project Team Member: <b>{deleteProjectTeamMemberName}</b> </h2>
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                <div class="slds-modal__content slds-p-around_medium slds-is-relative" id="deleteProjTeamMemberModalContentId">
+                    <template if:true={deleteProjTeamMemberIsLoading}>
+                        <lightning-spinner alternative-text="Loading" variant="brand" size="medium"></lightning-spinner>
+                    </template>
+                    <lightning-messages>                            
+                    </lightning-messages>
+                    <template if:true={deleteProjectTeamMemberError}>
+                        <div class="slds-align_absolute-center slds-p-around_x-small" style="color:white; background-color: red;border-radius: 15px; text-align:center;">{deleteProjectTeamMemberErrorMessage}</div>
+                    </template>
+                    <div class="slds-align_absolute-center slds-p-around_x-small" style="text-align:center;">
+                        <p>Are you sure you want to delete <b>{deleteProjectTeamMemberName}</b> as an Internal Project Team Member along with ALL Forecasts for the current and future weeks associated with them?</p>
+                    </div>
+
+                    <lightning-layout>
+                        <lightning-layout-item size="6" >
+                            <lightning-button
+                                class="slds-m-top_small slds-float_right slds-p-right_xx-small"
+                                label="Delete"
+                                variant="destructive"
+                                onclick={confirmDeleteProjTeamMember}>
+                            </lightning-button>
+                    
+                        </lightning-layout-item>
+                        <lightning-layout-item  size="6" >
+                            <lightning-button
+                                class="slds-m-top_small slds-float_left slds-p-left_xx-small"
+                                type="reset"
+                                label="Cancel"
+                                onclick={closeModal}>
+                            </lightning-button>
+                        </lightning-layout-item>
+                    </lightning-layout>
+                </div>
+            </div>            
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+    
+
+
+</template>

@@ -1,0 +1,57 @@
+.THIS .backgroundWhite{
+    background: white;
+}
+.THIS .attach-to-bottom{
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+    width: 100%;
+}
+.THIS .changeRecordTypeItemDescription {
+    padding-left: 1.25rem;
+}
+.THIS .changeRecordTypeItem {
+    padding-left: .5rem;
+}
+
+.THIS .sdgborder
+{
+    border: 1px solid rgb(221, 219, 218);
+    border-radius: 0.25rem;
+    background: white;
+}
+.THIS .slds-card
+{
+    border:none;
+}
+.THIS .slds-card__header
+{
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
+}
+.THIS lightning-primitive-cell-factory > lightning-primitive-cell-wrapper > div > slot > lightning-primitive-cell-types > lightning-primitive-cell-button > lightning-button > button{
+    align-items: normal;
+    background-color: rgba(0,0,0,0);
+    border-color: rgb(0, 109, 204);
+    border-style: none;
+    box-sizing: content-box;
+    color: rgb(0, 109, 204);
+    cursor: pointer;
+    display: inline;
+    font: inherit;
+    height: auto;
+    padding: 0;
+    perspective-origin: 0 0;
+    text-align: start;
+    text-decoration: underline;
+    transform-origin: 0 0;
+    width: auto;
+    -moz-appearance: none;
+    -webkit-logical-height: 1.1em; /* Chrome ignores auto, so we have to use this hack to set the correct height  */
+    -webkit-logical-width: auto; /* Chrome ignores auto, but here for completeness */
+}
+
+.THIS .customButton{
+    width: 30px;
+    height: 25px;
+}

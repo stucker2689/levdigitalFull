@@ -1,0 +1,616 @@
+<template>
+
+    <div class="slds-card slds-card_boundary" style="background-color: #f3f2f2;">
+        <div class="slds-card__header slds-grid" style="padding-top:15px;padding-bottom:5px;z-index:6">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                <span class="slds-icon_container " title="forecastIcon">
+                    <lightning-icon icon-name="utility:budget_period" title="Project Forecasting" size="small"></lightning-icon>
+                </span>
+                </div>
+                <div class="slds-media__body">
+                    <h2 class="slds-card__header-title">
+                        <p class="slds-card__header-link slds-truncate" title="Card Header">
+                            <span>Forecasting for {projectNameValue}</span>
+                        </p>
+                    </h2>
+                </div>
+                <div class="slds-no-flex" style="justify-content:center; display:flex;">
+                    <template if:true={isCreateNewTeamMemberEnabled}>
+                        <button class="slds-button slds-button_neutral" style="height:30px;" onclick={clickAddProjectTeamMemberHandle}>+ Add User</button>
+                        <button class="slds-button slds-button_brand" style="height:30px;" onclick={handleAddPlaceholderClick}>+ Add Placeholder</button>
+                        <button class="slds-button slds-button_neutral" style="height:30px;" title="Refresh" onclick={refreshApexForTable}>
+                            <lightning-icon
+                                icon-name="utility:loop"
+                                size="x-small"
+                                alternative-text="Refresh"
+                            >
+                            </lightning-icon>
+                        </button>
+                    </template>
+                </div>
+            </header>
+        </div>
+
+
+        <!-- START New Header Format 9.8.2023 -->
+        <div style="z-index:6">
+            <lightning-layout class="slds-p-left_medium">
+
+                <lightning-layout-item size="4" flexibility="no-shrink">
+
+                    <lightning-layout class="slds-p-bottom_small">
+                        <lightning-layout-item size="6" flexibility="no-grow" style="margin-right:2px;z-index:6">
+                            <lightning-input type="date" name="fromDateInput" label="From Date" value={projectStartDateValue} onchange={handleStartDateChange}></lightning-input>
+                        </lightning-layout-item>
+                        <lightning-layout-item size="6" flexibility="no-grow" class="slds-p-left_medium" style="z-index:6">
+                            <lightning-input type="date" name="toDate" label="To Date" value={projectEndDateValue} onchange={handleEndDateChange}></lightning-input>
+                        </lightning-layout-item>
+                    </lightning-layout>
+
+                    <div>
+                        <lightning-layout class="slds-p-bottom_small">
+                            <lightning-layout-item size="6" flexibility="no-grow" style="margin-right:2px;">
+                                <template if:true={isForecastTableEditEnabled}>
+                                    <lightning-radio-group
+                                        label="Set Allocation Method"
+                                        options={allocationSetTypesList}
+                                        value={allocationSetTypeSelected}
+                                        onchange={handleAllocationSetTypeChange}>
+                                    </lightning-radio-group>
+                                </template>
+                            </lightning-layout-item>
+                            <lightning-layout-item size="6" flexibility="no-grow" class="slds-p-left_medium">
+                                <lightning-radio-group
+                                        label="View Range"
+                                        options={tableViewTypesList}
+                                        value={tableViewTypeSelected}
+                                        onchange={handleViewTypeChange}>
+                                    </lightning-radio-group>
+                            </lightning-layout-item>
+                        </lightning-layout>
+                    </div>
+
+                </lightning-layout-item>
+
+                <lightning-layout-item size="8" flexibility="no-shrink">
+
+                    <lightning-layout class="slds-p-top_x-large"> 
+
+                        <lightning-layout-item size="5" flexibility="no-shrink">
+
+                        </lightning-layout-item>
+
+                        <lightning-layout-item size="7" flexibility="no-shrink">
+
+                            <template if:true={showBudgetaryInfo}>
+                                <label class="slds-form-element__label" part="label" for="budgetaryInfoLayout"><b>Budgetary Info</b></label>
+                                <!-- <lightning-layout id="budgetaryInfoLayout" class="slds-is-relative" lwc:ref="budgetInfo"> -->
+
+                                    <!-- <template if:true={budgetaryInfoLoading}>
+                                        <lightning-spinner alternative-text="Loading" size="medium" style="background-color: rgba(198, 198, 198, 0.016);"></lightning-spinner>
+                                    </template> -->
+
+                                <lightning-layout id="budgetaryInfoLayout" class="slds-is-relative" lwc:ref="budgetInfo">
+
+                                    <lightning-layout-item size="6" flexibility="no-shrink" class="slds-p-left_medium" style="margin-right:2px;"> 
+                                        <div>
+                                            <p style="display:inline-block;"><b>Lev Budget Remaining: </b><lightning-formatted-number value={allocationTableDataCOPY.levBudgetRemaining} format-style="currency" currency-code="USD"></lightning-formatted-number></p>
+                                        </div>
+                                        <div>
+                                            <p style="display:inline-block;margin-right:10px;"><b>Lev Remaining Forecasted Budget: </b><lightning-formatted-number value={allocationTableDataCOPY.levRemainingForecastedBudget} format-style="currency" currency-code="USD"></lightning-formatted-number></p>
+                                        </div>
+                                        <div>
+                                            <p style="display:inline-block;margin-right:10px;"><b>$ Difference: </b><lightning-formatted-number value={allocationTableDataCOPY.budgetAmountDiffernce} format-style="currency" currency-code="USD"></lightning-formatted-number></p>
+                                        </div>
+                                    </lightning-layout-item>
+
+                                    <lightning-layout-item size="6" flexibility="no-shrink" class="slds-p-left_medium">
+                                        <div>
+                                            <p style="display:inline-block;"><b>Lev Remaining Hours: </b>{allocationTableDataCOPY.levHoursRemaining}</p>
+                                        </div>
+                                        <div>
+                                            <p style="display:inline-block;margin-right:10px;"><b>Lev Remaining Forecasted Hours: </b>{allocationTableDataCOPY.levRemainingForecastedHours}</p>
+                                        </div>
+                                        <div>
+                                            <p style="display:inline-block;margin-right:10px;"><b>Hours Difference: </b>{allocationTableDataCOPY.budgetHoursDifference}</p>
+                                        </div>
+                                    </lightning-layout-item>
+
+                                </lightning-layout>
+                                
+                            </template>
+
+                        </lightning-layout-item>
+
+                    </lightning-layout>                    
+
+                </lightning-layout-item>
+
+
+            </lightning-layout>
+        </div>
+
+        <!-- END New Header Format 9.8.2023 -->
+
+        <br/>
+
+        <div style="z-index:6">
+            <lightning-layout class="border:2px black" horizontal-align="end" vertical-align="end">
+
+                <lightning-layout-item size="7" flexibility="no-grow" class="slds-p-left_medium">
+                    <p style="display:inline-block;margin-right:10px;"><lightning-helptext class="slds-m-bottom_large" content="This is a rollup of only Forecasted Hours currently displayed in this table."></lightning-helptext><b>Total Forecasted Hours in View: </b>{allocationTableDataCOPY.dynamicForecastedHoursTotal}</p>
+                </lightning-layout-item>
+
+                <lightning-layout-item size="5" flexibility="no-shrink" class="slds-p-left_xx-large">
+                    <label class="slds-form-element__label" part="label" for="colorKey2">Color Key</label>
+                    <div id="colorKey2">
+                        <p class="projectAllocationBubble" style="width:10px;height:10px;display:inline-block;margin-right:2px;" onclick={expandTable}></p>
+                        <p style="display:inline-block;margin-right:15px;">Project Allocation</p>
+
+                        <p class="otherAllocationBubble" style="width:10px;height:10px;display:inline-block;margin-right:2px;"></p>
+                        <p style="display:inline-block;margin-right:15px;">Other Project Allocation</p>
+
+                        <p class="timeOffAllocationBubble" style="width:10px;height:10px;display:inline-block;margin-right:2px;"></p>
+                        <p style="display:inline-block;margin-right:15px;">Time Off</p>
+
+                        <p class="overAllocatedSquare" style="width:10px;height:10px;display:inline-block;margin-right:2px;"></p>
+                        <p style="display:inline-block">Over-Allocated</p>
+                    </div>
+                </lightning-layout-item>
+            </lightning-layout>
+        </div>
+
+        <!--<br/>-->
+
+        <template if:true={displayForecastTable}>
+            <template if:true={allocationTableDataCOPY.projectWeekStartStringList}>
+                <div class="tableContained" style="overflow:scroll;" lwc:ref="forecastTable">
+                    <button lwc:ref="scrollRightButton" class="scrollRightButtonStyle" onclick={scrollRight}>
+                        <lightning-icon title="Scroll Right" icon-name="utility:right" size="small" style="position:absolute;left:1px;"></lightning-icon>
+                    </button>
+                    <button lwc:ref="scrollLeftButton" class="scrollLeftButtonStyle" style={scrollLeftPositionStyle} onclick={scrollLeft}>
+                        <lightning-icon title="Scroll Left" icon-name="utility:left" size="small" style="position:absolute;right:1px;"></lightning-icon>
+                        
+                    </button>
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered" id="forcastTable">
+                        <thead style="width:auto">
+                            <tr >
+                                <th lwc:ref="usersColumn" class="stickyHeader3" scope="col" style="background-color:rgb(243,243,243);text-align: center;font-size:0.9em;">
+                                    Users
+                                </th>
+                                <template for:each={allocationTableDataCOPY.projectWeekStartAndEndRangeStringList} for:item="weekRange" for:index="index">
+                                    <th key={weekRange} class="stickyHeader" scope="col" style="word-wrap:break-word;text-align: center;font-size:0.9em;" title = "Sunday - Saturday" data-column-unique-id={weekRange}>
+                                        {weekRange}
+                                    </th>
+                                </template>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={allocationTableDataCOPY.teamMemberDataWrapperList} for:item="projectTeamMember" for:index="projectTeamMemberIndex">
+                                <tr key={projectTeamMember} style="height:50px;" data-index={projectTeamMemberIndex}>
+
+                                    <th class="stickyHeader2" style="background-color:rgb(243,243,243)" data-label="Spec File">
+                                        <template if:true={projectTeamMember.isPlaceholderEmployee}>
+                                            <p style="text-align: center;">
+                                                <a onclick={clickReplacePlaceholder} data-index={projectTeamMemberIndex}><b>{projectTeamMember.projectTeamMemberNameLastNameFirst}</b></a>
+                                            </p>
+                                        </template>
+                                        <template if:false={projectTeamMember.isPlaceholderEmployee}>
+                                            <p style="text-align: center;">
+                                                <a href={projectTeamMember.projectTeamMemberURL}><b>{projectTeamMember.projectTeamMemberNameLastNameFirst}</b></a>
+                                            </p>
+                                        </template>
+                                        <!--<p style="text-align: center;">
+                                            <b>{projectTeamMember.projectTeamMemberNameLastNameFirst}</b>
+                                        </p>-->
+                                        <p style="text-align: center;font-size:0.75em">
+                                            {projectTeamMember.projectTeamMemberAssignedBillingRateName}
+                                        </p>
+                                        <template if:true={projectTeamMember.projectTeamMemberHasProjectAllocation}>
+                                            <p style="text-align: center;font-size:0.75em;color:rgb(0,107,175)">
+                                                {projectTeamMember.projectTeamMemberForecastingDateRange}: {projectTeamMember.projectTeamMemberTotalProjectAllocationHours} hrs 
+                                            </p>
+                                        </template>
+                                        <template if:false={projectTeamMember.projectTeamMemberHasProjectAllocation}>
+                                            <p style="text-align: center;font-size:0.75em;color:rgb(0,107,175)">
+                                                 No allocation data available.
+                                            </p>
+                                        </template>
+                                    </th>
+                                    <template for:each={projectTeamMember.allocationWeeklyRollups} for:item="forecastData" for:index="forecastDataIndex">
+
+                                        <td key={forecastData} onclick={handleTableColumnClick} ondblclick={handleTableColumnClick} data-index={forecastDataIndex} data-custom-data={projectTeamMember} data-row-index={projectTeamMemberIndex} class={projectTeamMember.placeholderStyleClass} style={forecastData.tableCellStyle} data-unique-row-id={forecastData.allocationDataUniqueId}>
+                                            <div style="bottom:0px;">
+                                                <!--<template if:true={forecastData.hasProjectAllocation}>-->
+                                                    <!-- <div style="background-color:rgb(0,122,201);border-radius: 25px;font-size:0.95em;">-->
+                                                    <!--<div class='unfocusedProjectAllocationBubble'>-->
+                                                        <div class={forecastData.projectAllocationClassName} data-unique-id={forecastData.allocationDataUniqueIdParentDiv} id={forecastData.allocationDataUniqueIdParentDiv}>
+                                                        <p data-index={forecastDataIndex} onclick={handleTableColumnClick} ondblclick={handleTableColumnClick} data-row-index={projectTeamMemberIndex} style="text-align: center;">
+                                                            <!--<input 
+                                                            class="inputBackgroundUnfocused"
+                                                            title={projectAllocationTitle} type="number" id={forecastData.allocationDataUniqueId} name="EstimatedHours" value={forecastData.projectAllocationData} data-unique-id={forecastData.allocationDataUniqueId}
+                                                            data-index={forecastDataIndex} data-proj-team-member={projectTeamMember} data-allocation-weekly-rollups={forecastData} data-row-index={projectTeamMemberIndex} data-unique-parent-id={forecastData.allocationDataUniqueIdParentDiv}
+                                                            onchange={forecastHoursChange} 
+                                                            onfocus={projectAllocationFocusHandle}
+                                                            onblur={projectAllocationBlurHandle}
+                                                            disabled={disableInlineAllocationEdit}
+                                                            onkeypress={handleEnter}
+                                                            onclick={handleTableColumnClick}
+                                                            >-->
+                                                            <!--<input 
+                                                            class="inputBackgroundUnfocused"
+                                                            title={projectAllocationTitle} type="number" id={forecastData.allocationDataUniqueId} name="EstimatedHours" value={forecastData.projectAllocationData} data-unique-id={forecastData.allocationDataUniqueId}
+                                                            data-index={forecastDataIndex} data-proj-team-member={projectTeamMember} data-allocation-weekly-rollups={forecastData} data-row-index={projectTeamMemberIndex} data-unique-parent-id={forecastData.allocationDataUniqueIdParentDiv}
+                                                            onchange={forecastHoursChange} 
+                                                            onfocus={projectAllocationFocusHandle}
+                                                            onblur={projectAllocationBlurHandle}
+                                                            onkeypress={handleEnter}
+                                                            onclick={handleTableColumnClick}
+                                                            >  -->
+                                                            <input 
+                                                            class={forecastData.projectAllocationClassName}
+                                                            title={projectAllocationTitle} type="number" id={forecastData.allocationDataUniqueId} name="EstimatedHours" value={forecastData.projectAllocationData} data-unique-id={forecastData.allocationDataUniqueId}
+                                                            data-index={forecastDataIndex} data-proj-team-member={projectTeamMember} data-allocation-weekly-rollups={forecastData} data-row-index={projectTeamMemberIndex} data-unique-parent-id={forecastData.allocationDataUniqueIdParentDiv}
+                                                            onchange={forecastHoursChange} 
+                                                            onfocus={projectAllocationFocusHandle}
+                                                            onblur={projectAllocationBlurHandle}
+                                                            onkeypress={handleEnter}
+                                                            onclick={handleTableColumnClick}
+                                                            >
+                                                        </p>
+                                                    </div>
+                                                <!--</template>-->
+                                                <template if:true={forecastData.hasOtherAllocations}>
+                                                    <div style="color:white;background-color:rgb(117,117,117);border-radius: 25px;font-size:0.9em;" onmouseover={handleOtherAllocationMouseOver} onmouseout={handleOtherAllocationMouseOut} data-allocation-id={forecastData.allocationDataUniqueId}>
+                                                        <p style="text-align: center;">
+                                                            {forecastData.otherAllocationData}
+                                                        </p>
+                                                        <div class="slds-popover slds-popover_large slds-popover_tooltip slds-nubbin_top slds-fall-into-ground slds-hide" role="tooltip" data-other-allocation-unique-id={forecastData.allocationDataUniqueId}
+                                                            style="position:absolute;top:50px;left:-125px;z-index:4">
+                                                            <div class="slds-popover__body">
+                                                                <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered">
+                                                                    <!--<thead>
+                                                                        <tr>
+                                                                            <th>
+                                                                                <b>Project</b>
+                                                                            </th>
+                                                                            <th>
+                                                                                <b>Forecasted Hours</b>
+                                                                            </th>
+                                                                        </tr>
+                                                                    </thead>-->
+                                                                    <tbody>
+                                                                        <template for:each={forecastData.otherAllocationBreakdownList} for:item="otherAllocationData" for:index="otherAllocationIndex">
+                                                                            <tr key={otherAllocationData}>
+                                                                                <td style="color:black">
+                                                                                    <b>{otherAllocationData.projectName}:</b> {otherAllocationData.projectForecastedHours} hrs
+                                                                                </td> 
+                                                                            </tr>
+                                                                        </template>
+                                                                    </tbody>
+                                                                </table>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </template>
+                                                <template if:true={forecastData.hasTimeOffAllocations}>
+                                                    <div style="color:white;background-color:rgb(181,199,163);border-radius: 25px;font-size:0.9em;">
+                                                        <p title="Time off hours allocated" style="text-align: center;">
+                                                            {forecastData.timeOffAllocationData}
+                                                        </p>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                        </td>
+
+                                    </template>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </div>
+            </template>
+        </template>
+        <template if:false={displayForecastTable}>
+            <div class="slds-is-relative" style="padding-top:25px;padding-bottom:25px">
+                <lightning-spinner alternative-text="Loading" size="medium"></lightning-spinner>
+            </div>
+        </template>            
+        <div class="slds-card__body">
+        </div>
+        <footer class="slds-card__footer">
+        </footer>
+    </div>
+
+    <!-- Set Allocation by Date Range Modal -->
+    <template if:true={openForecastEntryModal}>
+        <!-- Modal/Popup Box LWC starts here -->
+        <section role="dialog" tabindex="-1" aria-labelledby="setAllocationModalTopSectionId" aria-modal="true" aria-describedby="setAllocationModalModalContent" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header" style="background-color: #f3f2f2;">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="setAllocationModalHeaderId" class="slds-text-heading_medium slds-hyphenate">Set Allocation for: <b>{setAllocationModalHeader}</b></h2>
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                <div class="slds-modal__content slds-p-top_medium slds-p-top_medium slds-is-relative" id="setAllocationModalDivId">
+                    <template if:true={setAllocationModalIsLoading}>
+                        <lightning-spinner alternative-text="Loading" variant="brand" size="medium"></lightning-spinner>
+                    </template>
+                    <template if:true={setAllocationByDateRangeError}>
+                        <div class="slds-align_absolute-center slds-m-horizontal_x-small" style="color:white; background-color: red;border-radius: 15px;">
+                            <p class="slds-m-around_x-small slds-align_absolute-center slds-text-align_center">{setAllocationByDateRangeErrorMessage}</p>
+                        </div>
+                    </template>
+                    <div class="slds-p-horizontal_medium">
+                        <div>
+                            <p style="display:inline-block;margin-right:15px;">Selected Range</p>
+                            <lightning-input type="date" name="fromDate" label="From Date" value={setAllocationFromDate} onchange={handleAllocationSetDateStartDateChange} style="display:inline-block;margin-right:15px;"></lightning-input>
+                            <!--<p style="display:inline-block;margin-right:15px;">to</p>-->
+                            <lightning-input type="date" name="toDate" label="To Date" value={setAllocationToDate} onchange={handleAllocationSetDateEndDateChange} style="display:inline-block;margin-right:15px;"></lightning-input>
+                        </div>
+                        
+                        <div style="text-align: center;padding-left: 70px 0; font-size:0.8em;">
+                            Currently Allocated for {currentlyAllocatedHours} Hours over these {setAllocationDayCount} Day(s)
+                        </div>
+
+                        <div style="margin-top:15px;">
+                            <p style="display:inline-block;margin-right:15px;">Set Allocation By</p>
+                            <lightning-radio-group name="setAllocationByTypeRadioGroup" options={allocationTypesList} value={selectedAllocationType} onchange={handleAllocationTypeChange} type="button" style="display:inline-block;margin-right:15px;"> </lightning-radio-group>
+                        </div>
+
+                        <div class="slds-p-left_xx-large">
+                            <p style="display:inline-block;margin-right:15px;padding-left: 20px 0;">Allocate</p>
+                            <lightning-input type="number" step=".01" name="allocationByHours" value={allocationByHourNumber} onchange={handleGetAllocationByHourNumber} style="display:inline-block;margin-right:15px;padding-left: 20px 0;"></lightning-input>
+                            <p style="display:inline-block;margin-right:15px;padding-left: 20px 0;">Hours</p>
+
+                        </div>
+
+                        <div style="text-align: center;padding-left: 70px 0;color:red; font-size:0.8em;">
+                            Warning: Adding allocation will overwrite current allocation in this range
+                        </div>
+                    </div>
+                        
+                    <lightning-layout style="background-color: #f3f2f2;">
+                        <lightning-layout-item size="6" >
+                            <lightning-button
+                                class="slds-m-top_small slds-float_right slds-p-right_xx-small slds-m-bottom_small"
+                                label="Save"
+                                variant="brand"
+                                onclick={submitForecastAllocation}>
+                            </lightning-button>
+                        
+                        </lightning-layout-item>
+                        <lightning-layout-item  size="6" >
+                            <lightning-button
+                                class="slds-m-top_small slds-float_left slds-p-left_xx-small slds-m-bottom_small"
+                                type="reset"
+                                label="Cancel"
+                                onclick={closeModal}>
+                            </lightning-button>
+                        </lightning-layout-item>
+                    </lightning-layout>
+
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <!-- Create New Project Team Member Modal -->
+    <template if:true={openAddProjectTeamMemberModal}>
+        <!-- Modal/Popup Box LWC starts here -->
+        <section role="dialog" tabindex="-1" aria-labelledby="createNewProjectTeamMemberModalHeading" aria-modal="true" aria-describedby="createNewProjectTeamMemberModalContent" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="createNewProjectTeamMemberHeader" class="slds-text-heading_medium slds-hyphenate">Create New Internal Project Team Member</h2>
+                </header>
+                <template if:true={displayCreateProjTeamMemberForm}>
+                <!-- Modal/Popup Box LWC body starts here -->
+                    <div class="slds-modal__content slds-p-around_medium slds-is-relative" id="createNewProjectTeamMemberModalContentId">
+                        <template if:true={createProjTeamMemberFormIsLoading}>
+                            <lightning-spinner alternative-text="Loading" variant="brand" size="medium"></lightning-spinner>
+                        </template>
+                        <lightning-record-edit-form object-api-name="Client_Contact__c" onsubmit={onSubmitNewProjectTeamMember} onsuccess={onSuccessfulCreateNewProjectTeamMember}>
+                            <lightning-messages>                            
+                            </lightning-messages>
+                            <template if:true={createNewProjectTeamMemberError}>
+                                <div class="slds-align_absolute-center" style="color:white; background-color: red;border-radius: 15px;">{createNewProjectTeamMemberErrorMessage}</div>
+                            </template>
+                            <lightning-input-field field-name="Client_Contact__c" onchange={handleNewInternalProjectTeamMemberChange} required>
+                            </lightning-input-field>
+                            <lightning-combobox
+                                name="Assigned Billing Rate"
+                                label="Assigned Billing Rate"
+                                value=""
+                                placeholder="Select Billing Rate for Team Member..."
+                                options={billingRates}
+                                onchange={handleCreateNewProjectTeamMemberBillRateChange}
+                                dropdown-alignment="auto"
+                                required>
+                            </lightning-combobox>
+                                <lightning-layout>
+                                    <lightning-layout-item size="6" >
+                                        <lightning-button
+                                            class="slds-m-top_small slds-float_right slds-p-right_xx-small"
+                                            label="Create new"
+                                            type="submit"
+                                            variant="brand">
+                                        </lightning-button>
+                                
+                                    </lightning-layout-item>
+                                    <lightning-layout-item  size="6" >
+                                        <lightning-button
+                                            class="slds-m-top_small slds-float_left slds-p-left_xx-small"
+                                            type="reset"
+                                            label="Cancel"
+                                            onclick={closeModal}>
+                                        </lightning-button>
+                                    </lightning-layout-item>
+                                </lightning-layout>
+                        </lightning-record-edit-form>
+                    </div>
+                </template>
+            </div>
+            
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+
+
+    <!-- Create New Placeholder Project Team Member Modal -->
+    <template if:true={openAddPlaceholderModal}>
+        <!-- Modal/Popup Box LWC starts here -->
+        <section role="dialog" tabindex="-1" aria-labelledby="createNewPlaceholderProjectTeamMemberModalHeading" aria-modal="true" aria-describedby="createNewPlaceholderProjectTeamMemberModalContent" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="createNewPlaceholderHeader" class="slds-text-heading_medium slds-hyphenate">Create New Placeholder Team Member</h2>
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                <div class="slds-modal__content slds-p-around_medium slds-is-relative" id="createNewlaceholderModalContentId">
+                    <template if:true={createPlaceholderIsLoading}>
+                        <lightning-spinner alternative-text="Loading" variant="brand" size="medium"></lightning-spinner>
+                    </template>
+                    <lightning-record-edit-form object-api-name="Client_Contact__c" onsubmit={onSubmitPlaceholder} onsuccess={onSuccessfulPlaceholderCreation}>
+                        <lightning-messages>                            
+                        </lightning-messages>
+                        <template if:true={addPlaceholderError}>
+                            <div class="slds-align_absolute-center" style="color:white; background-color: red;border-radius: 15px;">{addPlaceholderErrorMessage}</div>
+                        </template>
+                        <lightning-input-field field-name="Client_Contact__c" value="0030W00003hn6LpQAI" disabled="true">
+                        </lightning-input-field>
+                        <lightning-combobox
+                            name="Placeholder Role"
+                            label="Placeholder Role"
+                            value=""
+                            placeholder="Select Role for Placeholder..."
+                            options={placeholderRoles}
+                            onchange={handlePlaceholderRoleChange}
+                            dropdown-alignment="auto"
+                            required>
+                        </lightning-combobox>
+                            <lightning-layout>
+                                <lightning-layout-item size="6" >
+                                    <lightning-button
+                                        class="slds-m-top_small slds-float_right slds-p-right_xx-small"
+                                        label="Create new"
+                                        type="submit"
+                                        variant="brand">
+                                    </lightning-button>
+                            
+                                </lightning-layout-item>
+                                <lightning-layout-item  size="6" >
+                                    <lightning-button
+                                        class="slds-m-top_small slds-float_left slds-p-left_xx-small"
+                                        type="reset"
+                                        label="Cancel"
+                                        onclick={closeModal}>
+                                    </lightning-button>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                    </lightning-record-edit-form>
+                </div>
+            </div>
+            
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+
+
+    <!-- Swap Placeholder For User Modal -->
+    <template if:true={openSwapPlaceholderForUserModal}>
+        <!-- Modal/Popup Box LWC starts here -->
+        <section role="dialog" tabindex="-1" aria-labelledby="swapPlaceholderForUserModalHeading" aria-modal="true" aria-describedby="swapPlaceholderForUserModalContent" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box LWC header here -->
+                <header class="slds-modal__header">
+                    <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                        <lightning-icon icon-name="utility:close"
+                            alternative-text="close"
+                            variant="inverse"
+                            size="small" ></lightning-icon>
+                        <span class="slds-assistive-text">Close</span>
+                    </button>
+                    <h2 id="swapPlaceholderForUserHeader" class="slds-text-heading_medium slds-hyphenate">Swap User to Project</h2>
+                </header>
+                <!-- Modal/Popup Box LWC body starts here -->
+                <div class="slds-modal__content slds-p-around_medium slds-is-relative" id="swapPlaceholderForUserModalContentId">
+                    <template if:true={swapPlaceholderForUserIsLoading}>
+                        <lightning-spinner alternative-text="Loading" variant="brand" size="medium"></lightning-spinner>
+                    </template>
+                    <lightning-record-edit-form object-api-name="Client_Contact__c" onsubmit={onSubmitSwapPlaceholderForUser}>
+                        <lightning-messages>                            
+                        </lightning-messages>
+                        <template if:true={swapPlaceholderForUserError}>
+                            <div class="slds-align_absolute-center slds-p-around_x-small" style="color:white; background-color: red;border-radius: 15px; text-align:center;">{swapPlaceholderForUserErrorMessage}</div>
+                        </template>
+                        <lightning-input-field field-name="Client_Contact__c" onchange={handleSwapPlaceholderForUserChange} required>
+                        </lightning-input-field>
+                        <lightning-input-field field-name="Assigned_Billing_Rate__c" value={selectedPlaceholderToSwapBillRateId} disabled="true">
+                        </lightning-input-field>
+                        <template if:true={showPlaceholderReplacementBillRateInput}>
+                            <lightning-combobox
+                                name="Existing Billing Rate(s) for Assignment"
+                                label="Existing Billing Rate(s) for Assignment"
+                                value=""
+                                placeholder="Select Billing Rate for Team Member..."
+                                options={billingRates}
+                                onchange={handleBillRateChangeForPlaceholderSwapReplacement}
+                                dropdown-alignment="auto"
+                                required>
+                            </lightning-combobox>
+
+                        </template>
+
+                            <lightning-layout>
+                                <lightning-layout-item size="6" >
+                                    <lightning-button
+                                        class="slds-m-top_small slds-float_right slds-p-right_xx-small"
+                                        label="Save"
+                                        type="submit"
+                                        variant="brand">
+                                    </lightning-button>
+                            
+                                </lightning-layout-item>
+                                <lightning-layout-item  size="6" >
+                                    <lightning-button
+                                        class="slds-m-top_small slds-float_left slds-p-left_xx-small"
+                                        type="reset"
+                                        label="Cancel"
+                                        onclick={closeModal}>
+                                    </lightning-button>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                    </lightning-record-edit-form>
+                </div>
+            </div>            
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+</template>

@@ -1,0 +1,12 @@
+<!--
+ - Created by cmunoz on 2/7/19.
+ -->
+
+<apex:page id="LatestStatusReportCloneAction" standardcontroller="Project__c">
+    LOADING STATUS REPORT........
+    <script type='text/javascript' src='/canvas/sdk/js/publisher.js'></script>
+    <script>
+        sforce.one.navigateToURL('{!Project__c.Clone_Status_Report_URL__c}');
+        Sfdc.canvas.publisher.publish({ name: "publisher.close", payload:{ refresh: "true" }});
+    </script>
+</apex:page>

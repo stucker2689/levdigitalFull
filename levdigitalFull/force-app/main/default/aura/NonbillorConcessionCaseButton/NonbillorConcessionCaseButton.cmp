@@ -1,0 +1,4 @@
+<aura:component implements="force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" >
+    <aura:attribute name="recordId" type="String" />
+    <c:LevAuraCase recordId="{!v.recordId}" type="Nonbill" />
+</aura:component>

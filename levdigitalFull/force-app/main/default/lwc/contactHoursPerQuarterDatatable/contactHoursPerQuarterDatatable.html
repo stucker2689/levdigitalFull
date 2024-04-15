@@ -1,0 +1,28 @@
+<template>
+    <lightning-card  icon-name="standard:operating_hours" class="my-card slds-card_boundary">
+        <h1 slot="title" >Hours per Quarter</h1>
+        <template if:true={hoursByQuarterData}>
+            <template if:true={allowScroll}>
+                <div style="height: 250px;">
+                    <lightning-datatable
+                        key-field="certId"
+                        data={hoursByQuarterData}
+                        columns={columns}
+                        hide-checkbox-column="true">
+                    </lightning-datatable>
+                </div>
+            </template>
+            <template if:false={allowScroll}>
+                <lightning-datatable
+                        key-field="certId"
+                        data={hoursByQuarterData}
+                        columns={columns}
+                        hide-checkbox-column="true">
+                    </lightning-datatable>
+            </template>
+        </template>                
+        <template if:true={error}>
+            No Hours for any Quarter for this Contact
+        </template>
+    </lightning-card> 
+</template>

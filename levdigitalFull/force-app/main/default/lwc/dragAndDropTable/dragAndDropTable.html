@@ -1,0 +1,53 @@
+<template>
+    <template if:false={hasRendered}>
+    <div class="slds-grid slds-grid_vertical">
+      <div class="slds-scrollable slds-grow">
+        <div class="slds-scrollable_none">
+          <table
+            aria-multiselectable="true"
+            class="
+              slds-table slds-no-row-hover
+              slds-table_bordered
+              slds-table_fixed-layout
+              slds-table_resizable-cols
+            "
+            role="grid"
+          >
+            <thead>
+              <tr class="slds-line-height_reset">
+                  <th width="10%"></th>
+                  <th width="20%">Work Order</th>
+                  <th width="70%">Work Name</th>
+              </tr>
+            </thead>
+            <tbody>
+              <template for:each={itemsCopy} for:item="el" for:index="index">
+                <tr
+                  key={el.Id}
+                  onchange={Change}
+                  draggable="true"
+                  ondrop={Drop}
+                  ondragstart={DragStart}
+                  ondragover={DragOver}
+                  title={index}>
+
+                <td role="gridcell">
+                  <div class="slds-cell-wrap" title={index}>
+                    <lightning-icon  title={index} icon-name="utility:drag_and_drop"></lightning-icon>
+                  </div>
+                </td>
+                  <td role="gridcell">
+                    <div class="slds-cell-wrap" title={index}>{el.workIndex}</div>
+                  </td>
+                  <td role="gridcell">
+                    <div class="slds-cell-wrap" title={index}>{el.workName}</div>
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </template>
+</template>

@@ -1,0 +1,254 @@
+<template>
+
+    <!-- Initial Create New Campaign and Select Campaign Milestone Work Record Creation Template Screen -->
+    <template if:true={openInitialCreationScreen}>
+        <lightning-quick-action-panel header="Create New Campaign Milestone" class="overflow: visible">
+            <lightning-progress-indicator current-step="step1">
+                <lightning-progress-step label="Create New Campaign Milestone and Select Work Template" value="step1"></lightning-progress-step>
+                <lightning-progress-step label="Confirm/Add/Remove Work Records to be Created" value="step2"></lightning-progress-step>
+                <lightning-progress-step label="Order Work Records" value="step3"></lightning-progress-step>
+                <lightning-progress-step label="Confirm Final Milestone and Work Creation" value="step4"></lightning-progress-step>
+            </lightning-progress-indicator>
+            <br/>
+            <div if:false={initialCreationScreenLoading} tabindex="-1" class="slds-p-around_xx-small parentDiv" >
+                    <div style="height: auto;">
+                        <div class="slds-p-around_medium lgc-bg">
+                            <lightning-input class="milestoneName" type="text" label="Campaign Milestone Name" value={newMilestoneName} max-length="60" required="true"></lightning-input>
+                        </div>
+                        <div class="slds-p-around_medium lgc-bg">
+                            <lightning-combobox
+                                class="workTemplateSelection"
+                                name="WorkRecordCreationTemplate"
+                                label="Work Record Creation Template"
+                                value={selectedWorkTemplateValue}
+                                placeholder="Select Work Record Template..."
+                                options={workTemplatesList} 
+                                onchange={handleWorkTemplateChange}
+                                dropdown-alignment="auto"
+                                required="true">
+                            </lightning-combobox>
+                        </div>
+                    </div>
+            </div>
+            <div if:true={initialCreationScreenLoading} class="slds-is-relative">
+                <br/>
+                <lightning-spinner
+                    alternative-text="Loading..." variant="brand">
+                </lightning-spinner>
+                <br/>
+            </div>
+            <div slot="footer">
+                <lightning-layout>
+                    <lightning-layout-item  size="12" >
+                        <lightning-button
+                            class="slds-float_right slds-p-left_xx-small"
+                            label="Next"
+                            variant="brand"
+                            onclick={nextFromFirstToSecondScreen}>
+                        </lightning-button>
+                        <lightning-button
+                            class="slds-float_right slds-p-right_xx-small"
+                            type="reset"
+                            label="Cancel"
+                            onclick={closeModal}>
+                        </lightning-button>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+        </lightning-quick-action-panel>
+    </template>
+
+
+    <!-- Initial Confirm Add Remove Work Records to be Created for Milestone -->
+    <template if:true={openConfirmWorkRecordScreen}>
+        <lightning-quick-action-panel header="Confirm/Add/Remove Work Records to be Created for Milestone" class="overflow: visible">
+            <lightning-progress-indicator current-step="step2">
+                <lightning-progress-step label="Create New Campaign Milestone and Select Work Template" value="step1"></lightning-progress-step>
+                <lightning-progress-step label="Confirm/Add/Remove Work Records to be Created" value="step2"></lightning-progress-step>
+                <lightning-progress-step label="Order Work Records" value="step3"></lightning-progress-step>
+                <lightning-progress-step label="Confirm Final Milestone and Work Creation" value="step4"></lightning-progress-step>
+            </lightning-progress-indicator>
+            <br/>
+            <div if:false={loadingWorkRecordCheckBoxGroup} tabindex="-1" class="slds-p-around_xx-small parentDiv" >
+                    <div>
+                        <div class="slds-p-around_medium lgc-bg slds-align_absolute-center">
+                            <lightning-checkbox-group
+                                name="workRecordsToBeCreated"
+                                label="Work Records to be Created for the Milestone"
+                                options={workRecordNamesList}
+                                value={selectedWorkRecordsToBeCreated}
+                                variant="label-hidden"
+                                style="columns: 2;"
+                                onchange={modifySelectedWorkRecords}
+                                required>
+                            </lightning-checkbox-group>
+                        </div>
+                        <br/>
+                        <div>
+                            <lightning-layout>
+                                <lightning-layout-item  size="6" >
+                                    <lightning-input class="customWorkNameInput" type="text" placeholder="Create a new Custom Work Name" value={customWorkName} onchange={handleCustomWorkNameChange} max-length="60" required={customWorkNameRequired} variant="label-hidden"></lightning-input>
+                                </lightning-layout-item>
+                                <lightning-layout-item  size="1">
+                                    <lightning-button
+                                        class="slds-p-left_xx-small"
+                                        label="Add"
+                                        variant="brand"
+                                        onclick={addCustomWorkItem}
+                                        disabled={disableAddWorkItemButton}>
+                                    </lightning-button>
+                                </lightning-layout-item>
+                            </lightning-layout>
+                        </div>
+                    </div>
+            </div>
+            <div if:true={loadingWorkRecordCheckBoxGroup} class="slds-is-relative">
+                <br/>
+                <lightning-spinner
+                    alternative-text="Loading..." variant="brand">
+                </lightning-spinner>
+                <br/>
+            </div>
+            <div slot="footer">
+                <lightning-layout>
+                    <lightning-layout-item  size="12" >
+                        <lightning-button
+                            class="slds-float_right slds-p-left_xx-small"
+                            label="Next"
+                            variant="brand"
+                            onclick={nextFromSecondToThirdScreen}
+                            disabled={loadingWorkRecordCheckBoxGroup}>
+                        </lightning-button>
+                        <lightning-button
+                            class="slds-float_right"
+                            label="Previous"
+                            variant="brand-outline"
+                            onclick={previousFromSecondToFirstScreen}
+                            disabled={loadingWorkRecordCheckBoxGroup}>
+                        </lightning-button>
+                        <lightning-button
+                            class="slds-float_right slds-p-right_xx-small"
+                            type="reset"
+                            label="Cancel"
+                            onclick={closeModal}
+                            disabled={loadingWorkRecordCheckBoxGroup}>
+                        </lightning-button>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+        </lightning-quick-action-panel>
+    </template>
+
+
+
+    <!-- Initial Confirm Add Remove Work Records to be Created for Milestone -->
+    <template if:true={openOrderWorkItemsScreen}>
+        <lightning-quick-action-panel header="Order Work Items" class="overflow: visible">
+            <lightning-progress-indicator current-step="step3">
+                <lightning-progress-step label="Create New Campaign Milestone and Select Work Template" value="step1"></lightning-progress-step>
+                <lightning-progress-step label="Confirm/Add/Remove Work Records to be Created" value="step2"></lightning-progress-step>
+                <lightning-progress-step label="Order Work Records" value="step3"></lightning-progress-step>
+                <lightning-progress-step label="Confirm Final Milestone and Work Creation" value="step4"></lightning-progress-step>
+            </lightning-progress-indicator>
+            <br/>
+            <div if:false={noWorkSelected} tabindex="-1" class="slds-p-around_xx-small parentDiv" >
+                <div style="height: auto;">
+                    <c-drag-and-drop-table items={updatedWorkOrderRecords} onworkorderchange={handleWorkOrderChange}></c-drag-And-Drop-Table>
+                </div>
+            </div>
+            <div if:true={noWorkSelected} tabindex="-1" class="slds-p-around_xx-small parentDiv" >
+                <div style="height: auto;">
+                    No Work Records were selected.
+                </div>
+            </div>
+            <div slot="footer">
+                <lightning-layout>
+                    <lightning-layout-item  size="12" >
+                        <lightning-button
+                            class="slds-float_right slds-p-left_xx-small"
+                            label="Next"
+                            variant="brand"
+                            onclick={nextFromThirdToFourthScreen}>
+                        </lightning-button>
+                        <lightning-button
+                            class="slds-float_right"
+                            label="Previous"
+                            variant="brand-outline"
+                            onclick={previousFromThirdToSecondScreen}>
+                        </lightning-button>
+                        <lightning-button
+                            class="slds-float_right slds-p-right_xx-small"
+                            type="reset"
+                            label="Cancel"
+                            onclick={closeModal}>
+                        </lightning-button>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+        </lightning-quick-action-panel>
+    </template>
+
+
+
+    <!-- Initial Final Confirm of Milestone and Work Records to be Created -->
+    <template if:true={openFinalConfirmationScreen}>
+        <lightning-quick-action-panel header="Confirm Final Milestone and Work Creation" class="overflow: visible">
+            <lightning-progress-indicator current-step="step4">
+                <lightning-progress-step label="Create New Campaign Milestone and Select Work Template" value="step1"></lightning-progress-step>
+                <lightning-progress-step label="Confirm/Add/Remove Work Records to be Created" value="step2"></lightning-progress-step>
+                <lightning-progress-step label="Order Work Records" value="step3"></lightning-progress-step>
+                <lightning-progress-step label="Confirm Final Milestone and Work Creation" value="step4"></lightning-progress-step>
+            </lightning-progress-indicator>
+            <br/>
+            <div if:false={loadingMilestoneAndWorkCreation} tabindex="-1" class="slds-p-around_xx-small parentDiv" >
+                    <div style="height: auto;">
+                        <p class="slds-text-body_large">MIlestone Name: <b>{newMilestoneName}</b></p>
+                        <br/>
+                        <lightning-datatable
+                                key-field="id"
+                                data={updatedWorkOrderRecords}
+                                columns={columns}
+                                column-widths-mode="auto"
+                                min-column-width="65"
+                                hide-checkbox-column>
+                        </lightning-datatable>
+                    </div>
+            </div>
+            <div if:true={loadingMilestoneAndWorkCreation} class="slds-is-relative">
+                <br/>
+                <lightning-spinner
+                    alternative-text="Loading..." variant="brand">
+                </lightning-spinner>
+                <br/>
+            </div>
+            <div slot="footer">
+                <lightning-layout>
+                    <lightning-layout-item  size="12" >
+                        <lightning-button
+                            class="slds-float_right slds-p-left_xx-small"
+                            label="Finish"
+                            variant="brand"
+                            onclick={finishCampaignCreation}
+                            disabled={disableButtons}>
+                        </lightning-button>
+                        <lightning-button
+                            class="slds-float_right"
+                            label="Previous"
+                            variant="brand-outline"
+                            onclick={previousFromFourthToThirdScreen}
+                            disabled={disableButtons}>
+                        </lightning-button>
+                        <lightning-button
+                            class="slds-float_right slds-p-right_xx-small"
+                            type="reset"
+                            label="Cancel"
+                            onclick={closeModal}
+                            disabled={disableButtons}>
+                        </lightning-button>
+                    </lightning-layout-item>
+                </lightning-layout>
+            </div>
+        </lightning-quick-action-panel>
+    </template>
+
+</template>

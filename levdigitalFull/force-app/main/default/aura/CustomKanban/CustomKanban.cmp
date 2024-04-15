@@ -1,0 +1,376 @@
+<aura:component controller="CustomKanbanController" implements="flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes,force:appHostable" access="global">
+    <aura:attribute name="caseOwners" type="string" />
+    <aura:attribute name="caseOwnerList" type="object"/>
+    <aura:attribute name="userIdToNameMap" type="map"/>
+    <aura:attribute name="allCaseOwnerIdList" type="List"/>
+    <aura:attribute name="allCaseOwnerNameList" type="List"/>
+    <aura:attribute name="caseStatus" type="string" />
+    <aura:attribute name="caseStatusList" type="List"/>
+    <aura:attribute name="allCaseStatusList" type="List" default="['Pending', 'New', 'Upcoming', 'In Process', 'On Hold', 'Ready for Rollout', 'Rollout In-Process', 'Survey Ready', 'Completed', 'Cancelled', 'Deployed']"/>
+    <aura:attribute name="caseDept" type="string" />
+    <aura:attribute name="allCaseDeptList" type="List"/>
+    <aura:attribute name="defaultStatusHeaders" type="List"/>
+    <aura:attribute name="groupBy" type="string" default='Sprint Week'/>
+    <aura:attribute name="fromDate" type="String"/>
+    <aura:attribute name="toDate" type="String"/>
+    <aura:attribute name="defaultFromDate" type="String"/>
+    <aura:attribute name="defaultToDate" type="String"/>
+    <aura:attribute name="KanbanRecords" type="Object"/>
+    <aura:attribute name="KanbanRecordsBackup" type="Object"/>
+    <aura:attribute name="KanbanRollups" type="Object"/>
+    <aura:attribute name="columnHeaders" type="List"/>
+    <aura:attribute name="allColumnHeaders" type="List"/>
+    <aura:attribute name="KanbanViewSelected" type="String" default="Status Kanban"/>
+    <aura:attribute name="columnHeadersStandby" type="List"/>
+    <aura:attribute name="kanbanDataLoaded" type="Boolean" default="false"/>
+    <aura:attribute name="SprintView" type="Boolean" default="true"/>
+    <aura:attribute name="sprintWeekView" type="Boolean" default="false"/>
+    <aura:attribute name="openRecordEdit" type="Boolean" default="false"/>
+    <aura:attribute name="editRecordLoading" type="Boolean" default="true"/> <!-- New for Record Edit Form 2/16-->
+    <aura:attribute name="editRecord" type="Object"/>
+    <aura:attribute name="editRecordPosition" type="String"/>
+    <aura:attribute name="recordTypeIdForNew" type="String" default="012d0000000l5xYAAQ"/>
+    <aura:attribute name="disableDateFilters" type="Boolean" default="false"/>
+    <aura:attribute name="editRecordFields" type="List" default ="['OwnerId', 'Status', 'ContactId', 'Priority', 'RecordTypeId', 'CaseNumber', 'Requested_Due_Date__c',
+    'Due_Date_Internal__c', 'Start_Date__c', 'Requirements_Status__c', 'Date_Requirements_Completed__c', 'Internal_Ops_Estimated_Hours__c','QA_Owner__c', 'Estimated_QA_Hours__c', 'QA_Status__c', 'Actual_Hours_Worked__c', 'TotalQAHoursWorked__c',
+    'Sprint_Week__c', 'Out_of_Scope__c', 'Type', 'Internal_Request_Type__c',
+    'Primary_Department__c', 'Secondary_Department__c', 'OperationsDepartment__c', 'Dev_Work_Required__c', 'CPQ_Request__c', 'Skills_Matrix__c', 'Description']"/>
+    <aura:attribute name="editCaseOwnerIsOpen" type="Boolean" default="false"/>
+    <aura:attribute name="editCaseOwnerRecord" type="Object"/>
+    <aura:attribute name="editCaseOwnerRecordPosition" type="String"/>
+    <aura:attribute name="editRecordOwnerFields" type="List" default ="['Case_Owner__c']"/>
+
+    <aura:attribute name="editQAStatusIsOpen" type="Boolean" default="false"/>
+    <aura:attribute name="editQAStatusRecord" type="Object"/>
+    <aura:attribute name="editQAStatusRecordPosition" type="String"/>
+    <aura:attribute name="editQAStatusFields" type="List" default ="['QA_Status__c']"/>  
+    
+    <aura:attribute name="editCaseStatusIsOpen" type="Boolean" default="false"/>
+    <aura:attribute name="editCaseStatusRecord" type="Object"/>
+    <aura:attribute name="editCaseStatusRecordPosition" type="String"/>
+    <aura:attribute name="editCaseStatusFields" type="List" default ="['Status']"/> 
+
+    <aura:attribute name="editQAOwnerIsOpen" type="Boolean" default="false"/>
+    <aura:attribute name="editQAOwnerRecord" type="Object"/>
+    <aura:attribute name="editQAOwnerRecordPosition" type="String"/>
+    <aura:attribute name="editRecordQAOwnerFields" type="List" default ="['QA_Owner__c']"/>
+
+    <aura:attribute name="kanbanBodyWidth" type="String" default="slds-size_3-of-3"/>
+
+    <aura:attribute name="isSuccess" type="boolean" default="true"/>
+    <aura:attribute name="errorMessage" type="String"/>
+    
+    <aura:handler name="kanbanChildChanged" event="c:KanbanEvt" action="{!c.childChanged}"/>
+    <aura:handler name="caseOwnerSelected" event="c:custom_event" action="{!c.handleCaseOwnerFilter}"/>
+    <aura:handler name="editRecordSelected" event="c:editRecordEvent" action="{!c.handleEditRecord}"/>
+    <aura:handler name="editCaseOwner" event="c:editCaseOwner" action="{!c.handleEditCaseOwner}"/>
+    <aura:handler name="editKanbanCaseStatus" event="c:editKanbanCaseStatus" action="{!c.handleEditCaseStatus}"/>
+    <aura:handler name="editCaseQAStatus" event="c:editCaseQAStatus" action="{!c.handleEditCaseQAStatus}"/>
+    <aura:handler name="editQAOwner" event="c:editQAOwner" action="{!c.handleEditQAOwner}"/>
+
+    <aura:registerEvent name="highlightEditCase" type="c:highlightEditCase"/>
+        
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+
+    <lightning:card iconName="utility:kanban">
+        <aura:set attribute="title">
+            <span class="slds-truncate">
+                Internal Product Management Kanban
+            </span>
+            <p class="slds-truncate">
+                <span class="slds-text-title_caps">grouped by {!v.groupBy}</span>
+                    <span class="slds-text-title_caps">• Summarized by Estimated Hours</span>                  
+                    </p>
+        </aura:set>
+        <aura:set attribute="actions">            
+            <lightning:buttonGroup >
+                <lightning:buttonMenu label ="{!v.KanbanViewSelected}" alternativeText="Select Kanban View" value="{!v.KanbanViewSelected}" onselect="{!c.changeView}"> 
+                    <lightning:menuItem value="Sprint Week Kanban" label="Cases by Sprint Week" />
+                    <lightning:menuItem value="Sprint Month Kanban" label="Cases by Sprint Month" />
+                    <lightning:menuItem value="Sprint Quarter Kanban" label="Cases by Sprint Quarter" />
+                    <lightning:menuItem value="Status Kanban" label="Cases by Status" />
+                </lightning:buttonMenu>
+                <!--<lightning:button label="Test Apex" variant="neutral" onclick="{!c.doInItToo}"/>-->
+                <!--Create on click function for creating internal case with record ID, make it reload on copmletion of creation of new object-->
+                <!--Also make it refresh after edit of case, see if you can refresh but keep filters so it is a fast process to edit a case then close and see the edited details-->
+                <lightning:button label="New" variant="neutral" onclick="{!c.initiateNewRecordCreation}"/>
+                <lightning:buttonIcon iconName="utility:refresh" variant="neutral" alternativeText="Refresh Data" aura:id="refreshButton" onclick="{!c.handleRefresh}"/>
+            </lightning:buttonGroup>
+            
+        </aura:set>
+        <aura:if isTrue="{!v.kanbanDataLoaded}">
+        <lightning:layout class="slds-p-left_medium">
+            <lightning:layoutItem size="1" flexibility="no-grow">
+                <lightning:input aura:id="fromDateInput" type="date" name="fromDateInput" label="From Date" value="{!v.fromDate}" onchange="{!c.getFromDate}" disabled="{!v.disableDateFilters}"/>
+            </lightning:layoutItem>
+                <lightning:layoutItem size="1" flexibility="no-grow" class="slds-p-left_medium">
+                    <lightning:input aura:id="fromDateInput" type="date" name="toDate" label="To Date" value="{!v.toDate}" onchange="{!c.getToDate}" disabled="{!v.disableDateFilters}"/>
+                </lightning:layoutItem>
+            <lightning:layoutItem size="2" flexibility="no-grow" class="slds-p-left_medium">
+                    <c:custom_multipicklist value="{!v.caseOwners}" aura:id="caseOwners" placeholder="Filter By Case Owners" label="Case Owners" onchange="{!c.handleCaseOwnerFilter}">
+                        <aura:iteration items="{!v.caseOwnerList}" var="objwrap">
+                            <c:custom_option label="{!objwrap.Name}" value="{!objwrap.Name}"/>
+                        </aura:iteration>
+                    </c:custom_multipicklist>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="2" flexibility="no-grow" class="slds-p-left_medium">
+                    <c:custom_multipicklist value="{!v.caseStatus}" aura:id="caseStatus" placeholder="Filter By Case Status" label="Case Status" onchange="{!c.handleCaseStatusFilter}">
+                        <aura:iteration items="{!v.allCaseStatusList}" var="statusWrap">
+                            <c:custom_option label="{!statusWrap}" value="{!statusWrap}"/>
+                        </aura:iteration>
+                    </c:custom_multipicklist>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="2" flexibility="no-grow" class="slds-p-left_medium">   
+                    <c:custom_multipicklist value="{!v.caseDept}" aura:id="caseDept" placeholder="Filter By Case Department" label="Case Department" onchange="{!c.handleCaseDepartmentFilter}">
+                        <aura:iteration items="{!v.allCaseDeptList}" var="statusWrap">
+                            <c:custom_option label="{!statusWrap}" value="{!statusWrap}"/>
+                        </aura:iteration>
+                    </c:custom_multipicklist>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="2" flexibility="no-grow" class="slds-p-left_medium slds-p-top_large">
+                <lightning:button variant="brand" label="Reset Filters" title="Brand action" onclick="{! c.clearFilters }" />
+            </lightning:layoutItem>
+
+        </lightning:layout>
+        <aura:if isTrue="{!v.kanbanDataLoaded}">
+            <div class="cardClass slds-p-top_medium" style="position:relative;">
+                <div class="kanbanContainerDiv">
+                <aura:if isTrue="{!v.openRecordEdit}">
+                    <div class=" slds-border_right slds-border_bottom slds-border_top slds-border_left">
+                        <lightning:layout class="slds-p-left_medium slds-p-right_medium" >
+                        <!--Original Edit Popout 12.28-->
+                            <lightning:card title="Edit Case" iconName="standard:note">
+                                <aura:set attribute="actions">
+                                    <lightning:button label="Close" onclick="{!c.closeEditRecord}"/>
+                                </aura:set>
+                                <aura:set attribute="title">
+                                    <div class="background-color: gray">
+                                        <header class="slds-truncate"  style="width: 450px;">
+                                            <lightning:icon iconName="standard:notes"/> <b>Edit Case: {!v.editRecord.Subject}</b>
+                                        </header>
+                                    </div>
+                                </aura:set>
+                                <div  style="width: 600px; height: 600px; overflow-y:auto; overflow-x: hidden;" >
+                                    <!-- <lightning:recordForm aura:id="recordForm"
+                                        recordId="{!v.editRecord.CaseId}"
+                                        objectApiName="Case"
+                                        fields = "{!v.editRecordFields}"                                            
+                                        columns="1"
+                                        mode="View"
+                                        density="comfy"
+                                        onsuccess = "{!c.onEditRecordSuccess}">
+                                    </lightning:recordForm> -->
+
+                                    <aura:if isTrue="{!v.editRecordLoading}">
+                                        <lightning:spinner aura:id="editRecordSpinner" variant="brand" alternativeText="Loading"/>
+                                    </aura:if>
+
+                                    <lightning:recordEditForm aura:id="recordEditForm" objectApiName="Case" recordId="{!v.editRecord.CaseId}" onload="{!c.onEditRecordLoad}" onsuccess = "{!c.onEditRecordSuccess}">
+                                        <lightning:messages />
+                                        <lightning:inputField fieldName="OwnerId" />
+                                        <lightning:inputField fieldName="Status" />
+                                        <lightning:inputField fieldName="ContactId" />
+                                        <lightning:inputField fieldName="Priority" />
+                                        <lightning:inputField fieldName="RecordTypeId" />
+                                        <lightning:inputField fieldName="CaseNumber" />
+                                        <lightning:inputField fieldName="Requested_Due_Date__c" />
+                                        <lightning:inputField fieldName="Due_Date_Internal__c" />
+                                        <lightning:inputField fieldName="Start_Date__c" />
+                                        <lightning:inputField fieldName="Requirements_Status__c" />
+                                        <lightning:inputField fieldName="Date_Requirements_Completed__c" />
+                                        <lightning:inputField fieldName="Internal_Ops_Estimated_Hours__c" />
+                                        <lightning:inputField fieldName="QA_Owner__c" />
+                                        <lightning:inputField fieldName="Estimated_QA_Hours__c" />
+                                        <lightning:inputField fieldName="QA_Status__c" />
+                                        <lightning:inputField fieldName="TotalQAHoursWorked__c" />
+                                        <lightning:inputField fieldName="Actual_Hours_Worked__c" />
+                                        <lightning:inputField fieldName="Sprint_Week__c" />
+                                        <lightning:inputField fieldName="Out_of_Scope__c" />
+                                        <lightning:inputField fieldName="Type" />
+                                        <lightning:inputField fieldName="Internal_Request_Type__c" />
+                                        <lightning:inputField fieldName="Primary_Department__c" />
+                                        <lightning:inputField fieldName="Secondary_Department__c" />
+                                        <lightning:inputField fieldName="OperationsDepartment__c" />
+                                        <lightning:inputField fieldName="Dev_Work_Required__c" />
+                                        <lightning:inputField fieldName="CPQ_Request__c" />
+                                        <lightning:inputField fieldName="Skills_Matrix__c" />
+                                        <lightning:inputField fieldName="Description" />
+                                    </lightning:recordEditForm>
+                                </div>
+                                <div slot="footer">
+                                    <lightning:layout class="slds-p-bottom_small slds-p-top_small">
+                                        <lightning:layoutItem  size="6" class="slds-p-right_small">
+                                            <lightning:button
+                                                class="slds-float_right "
+                                                type="reset"
+                                                label="Cancel"
+                                                onclick="{!c.closeEditRecord}">
+                                            </lightning:button>
+                                        </lightning:layoutItem>
+                        
+                                        <lightning:layoutItem size="6" class="slds-p-left_small" >
+                                            <lightning:button
+                                                class="slds-float_left"
+                                                label="Save"
+                                                onclick="{!c.submitEditForm}"
+                                                variant="brand">
+                                            </lightning:button>                                        
+                                        </lightning:layoutItem>
+                                    </lightning:layout>
+                                </div>
+                            </lightning:card>
+                            <!--END OF Original Edit Popout 12.28-->
+
+                        </lightning:layout>
+                    </div>
+                </aura:if>
+                <aura:iteration items="{!v.columnHeaders}" var="ch">
+                    <c:CustomKanbanColumn kanbanHeight="250" 
+                    pickvalue="{!ch}" 
+                    KanbanRecords = "{!v.KanbanRecords}"
+                    KanbanRollups = "{!v.KanbanRollups}"
+                    SprintView = "{!v.SprintView}"
+                    sprintWeekView = "{!v.sprintWeekView}"
+                    IsOpsView = "false"
+                    ownerFilter = "{!v.caseOwners}"
+                    ownerUserIdtoNameMap = "{!v.userIdToNameMap}"
+                    />
+                </aura:iteration>
+                </div>
+              </div>
+        </aura:if>
+            <aura:set attribute="else">
+                <lightning:spinner alternativeText="Loading" />
+            </aura:set>
+    </aura:if>
+    </lightning:card>
+    <aura:if isTrue="{!v.editCaseOwnerIsOpen}">
+            
+            <!--###### MODAL BOX Start######--> 
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open overflow: visible;">
+                <div class="slds-modal__container">
+                    <!-- ###### MODAL BOX HEADER Start ######-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{! 'Edit Case Owner for: ' + v.editCaseOwnerRecord.Subject}</h2>
+                    </header>
+                    <!--###### MODAL BOX BODY Part Start######-->
+                    <div class="slds-modal__content slds-p-around_large overflow-y: visible;" id="modal-content-id-1">
+
+                        <lightning:recordForm aura:id="recordEditOwnerForm"
+                                            recordId="{!v.editCaseOwnerRecord.CaseId}"
+                                            objectApiName="Case" 
+                                            fields="{!v.editRecordOwnerFields}"                                          
+                                            columns="1"
+                                            mode="View"
+                                            density="comfy"
+                                            onsuccess = "{!c.handleEditCaseOwnerSuccess}"/>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+            <!--###### MODAL BOX Part END Here ######-->
+            
+    </aura:if>
+
+    <aura:if isTrue="{!v.editQAStatusIsOpen}">
+            
+            <!--###### MODAL BOX Start######--> 
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-02" aria-modal="true" aria-describedby="modal-content-id-2" class="slds-modal slds-fade-in-open overflow: visible;">
+                <div class="slds-modal__container">
+                    <!-- ###### MODAL BOX HEADER Start ######-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-02" class="slds-text-heading_medium slds-hyphenate">{! 'Edit QA Status for: ' + v.editQAStatusRecord.Subject}</h2>
+                    </header>
+                    <!--###### MODAL BOX BODY Part Start######-->
+                    <div class="slds-modal__content slds-p-around_large overflow-y: visible;" id="modal-content-id-2">
+
+                        <lightning:recordForm aura:id="recordEditQAStatusForm"
+                                            recordId="{!v.editQAStatusRecord.CaseId}"
+                                            objectApiName="Case" 
+                                            fields="{!v.editQAStatusFields}"                                          
+                                            columns="1"
+                                            mode="View"
+                                            density="comfy"
+                                            onsuccess = "{!c.handleEditQAStatusSuccess}"/>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+            <!--###### MODAL BOX Part END Here ######-->
+            
+    </aura:if>
+
+    <aura:if isTrue="{!v.editCaseStatusIsOpen}">
+            
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-02" aria-modal="true" aria-describedby="modal-content-id-2" class="slds-modal slds-fade-in-open overflow: visible;">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-02" class="slds-text-heading_medium slds-hyphenate">{! 'Edit Status for: ' + v.editCaseStatusRecord.Subject}</h2>
+                    </header>
+                        <div class="slds-modal__content slds-p-around_large overflow-y: visible;" id="modal-content-id-2">
+
+                        <lightning:recordForm aura:id="recordEditCaseStatusForm"
+                                            recordId="{!v.editCaseStatusRecord.CaseId}"
+                                            objectApiName="Case" 
+                                            fields="{!v.editCaseStatusFields}"                                          
+                                            columns="1"
+                                            mode="View"
+                                            density="comfy"
+                                            onsuccess = "{!c.handleEditCaseStatusSuccess}"/>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+            
+    </aura:if>
+
+    <aura:if isTrue="{!v.editQAOwnerIsOpen}">
+            
+            <!--###### MODAL BOX Start######--> 
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open overflow: visible;">
+                <div class="slds-modal__container">
+                    <!-- ###### MODAL BOX HEADER Start ######-->
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close"
+                                              onclick="{! c.closeModel }"
+                                              alternativeText="close"
+                                              variant="bare-inverse"
+                                              class="slds-modal__close"/>
+                        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{! 'Edit QA Owner for: ' + v.editQAOwnerRecord.Subject}</h2>
+                    </header>
+                    <!--###### MODAL BOX BODY Part Start######-->
+                    <div class="slds-modal__content slds-p-around_large overflow-y: visible;" id="modal-content-id-1">
+
+                        <lightning:recordForm aura:id="recordEditOwnerForm"
+                                            recordId="{!v.editQAOwnerRecord.CaseId}"
+                                            objectApiName="Case" 
+                                            fields="{!v.editRecordQAOwnerFields}"                                          
+                                            columns="1"
+                                            mode="View"
+                                            density="comfy"
+                                            onsuccess = "{!c.handleEditQAOwnerSuccess}"/>
+                    </div>
+                </div>
+            </section>
+            <div class="slds-backdrop slds-backdrop_open"></div>
+            <!--###### MODAL BOX Part END Here ######-->
+            
+    </aura:if>
+   
+
+</aura:component>

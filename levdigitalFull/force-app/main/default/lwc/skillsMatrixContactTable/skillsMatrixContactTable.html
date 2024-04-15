@@ -1,0 +1,77 @@
+<template>
+  <div style="height: 350px;">
+    <div style="height:100%; position:relative;">
+      <div class="slds-table_header-fixed_container" style="height:100%;">
+        <div class="slds-scrollable_y">
+          <table class="slds-table slds-table_header-fixed slds-table_cell-buffer slds-table_bordered" style="table-layout:fixed;">
+            <thead>
+                <th class="" scope="col">
+                  <span class="slds-cell-fixed slds-has-button-menu" style="width:30%">
+                    <a href="javascript:void(0);" role="button" tabindex="-1" data-navigation="enable" class="slds-th__action slds-text-link_reset">
+                      <span title="Product/Area" class="slds-truncate">Product/Area</span>
+                    </a>
+                  </span>
+                </th>
+                <th class="" scope="col">
+                  <span class="slds-cell-fixed slds-has-button-menu" style="width:30%">
+                    <a href="javascript:void(0);" role="button" tabindex="-1" data-navigation="enable" class="slds-th__action slds-text-link_reset">
+                      <span title="Skill" class="slds-truncate">Skill</span>
+                    </a>
+                  </span>
+                </th>
+                <th class="" scope="col">
+                  <span class="slds-cell-fixed slds-has-button-menu" style="width:30%">
+                    <a href="javascript:void(0);" role="button" tabindex="-1" data-navigation="enable" class="slds-th__action slds-text-link_reset">
+                      <span title="Rating" class="slds-truncate">Rating</span>
+                    </a>
+                  </span>
+                </th>
+                <th class="" scope="col">
+                  <span class="slds-cell-fixed slds-has-button-menu" style="width:10%">
+                    <a href="javascript:void(0);" role="button" tabindex="-1" data-navigation="enable" class="slds-th__action slds-text-link_reset">
+                      <span title="FocusArea" class="slds-wrap">{label.Skill_Focus}</span>
+                    </a>
+                  </span>
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <template for:each={rowData} for:item="row" >
+                <tr class="slds-hint-parent" key={row.skillId}>
+                  <th data-label="Product/Area" scope="row" >
+                    <span class="slds-wrap" title={row.skillProductArea}>{row.skillProductArea}</span>
+                  </th>
+                  <td data-label="Skill">
+                    <span class="slds-truncate" title={row.skillName}>{row.skillName}</span> 
+                    <template if:true={row.skillDescription}>
+                      <div style="display:inline-block; position:relative;">
+                        <lightning-helptext content={row.skillDescription} style="margin-left:2px; position:absolute; top:-16.6px"></lightning-helptext>
+                      </div>
+                    </template>
+                  </td>
+                  <td data-label="Rating" >
+                      <span class="slds-truncate" title={row.rating}>
+                        <lightning-radio-group 
+                            name={row.skillId}
+                            label="Rating"
+                            options={ratingOptions}
+                            value={row.rating}
+                            type="button"
+                            variant="label-hidden"
+                            onchange={handleChange}>
+                        </lightning-radio-group>
+                      </span>
+                  </td>
+                  <td data-label="FocusArea">
+                    <span class="slds-float_right slds-truncate" title={row.FocusArea}></span> 
+                      <input type="checkbox" name={row.skillId} checked={row.focusArea} onchange={handleFocus}/>                      
+                  </td>
+                </tr>
+              </template>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>

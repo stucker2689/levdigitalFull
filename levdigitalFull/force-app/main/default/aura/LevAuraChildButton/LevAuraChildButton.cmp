@@ -1,0 +1,75 @@
+<aura:component controller="LevAuraCasesController" implements="force:hasRecordId,force:lightningQuickActionWithoutHeader" access="global" >   
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="lstOfRecordType" type="String[]" />
+    <aura:attribute name="mapOfRecordType" type="Map" />
+    <aura:attribute name="recordTypePickListValue" type="String" />
+    <aura:attribute name="proj" type="Project__c" />
+    <aura:attribute name="contactId" type="String" />
+    <aura:attribute name="caseRecordTypes" type="List" />
+    <aura:attribute name="loaded" type="Boolean" default="false" />
+    <aura:attribute name="type" type="String" default=""/>
+    <aura:attribute name="objectName" type="String" default="" />
+    <aura:attribute name="objectLabel" type="String" default="" />
+    <aura:handler name="init" value="{!this}" action="{!c.fetchListOfRecordTypes}"/>
+    <lightning:flow aura:id="autoWorkFlow" onstatuschange="{!c.handleWorkFlowStatus}" />
+    <div class="slds-is-relative slds-align_absolute-center">
+        <lightning:layout multipleRows="true" horizontalAlign="center">
+            <aura:if isTrue="{! v.loaded }">
+                <lightning:spinner alternativeText="Loading" />
+            </aura:if>
+            <lightning:layoutItem  size="12">
+                <lightning:layout multipleRows="true">
+                    <lightning:layoutItem flexibility="auto"
+                                        size="12"
+                                        largeDeviceSize="12"
+                                        mediumDeviceSize="12"
+                                        smallDeviceSize="12">
+                        <div >
+                            <div class="modal-header slds-modal__header" style="width: 100%">
+                                <h2 class="slds-text-heading_medium" >New {!v.objectLabel}</h2>
+                            </div>
+
+                        </div>
+                        <lightning:layout multipleRows="true">
+                            <lightning:layoutItem flexibility="auto"  size="5">
+                                <div class="slds-m-top_large slds-p-bottom_small" >
+                                    <lightning:formattedText value="Select a record type for this Case." />
+                                </div>
+                            </lightning:layoutItem>
+                            <lightning:layoutItem flexibility="auto"  size="7" >
+                                <div class="slds-p-bottom_medium"></div>
+                                <aura:iteration items="{!v.lstOfRecordType}" var="item" indexVar="i">
+                                    <div>
+                                        <input type="radio" name="recordTypeOpts" id="{!i}" value="{!item.value}" onclick="{!c.getRecordTypePickListValue}" checked="{!i == 0 ? 'checked': null }" />
+                                        <label class="slds-radio__label" for="{!i}">
+                                            <span class="slds-radio_faux slds-p-left_small"></span>
+                                            <span class="changeRecordTypeItem">{!item.label}</span>
+                                            <div class="changeRecordTypeItemDescription slds-p-left_large">{!item.description}</div>
+                                        </label>
+                                    </div><br />
+                                </aura:iteration>
+                            </lightning:layoutItem>
+                        </lightning:layout>                     
+                    </lightning:layoutItem>
+                    <lightning:layoutItem flexibility="auto"
+                                        size="12"
+                                        largeDeviceSize="12"
+                                        mediumDeviceSize="12"
+                                        smallDeviceSize="12"
+                                        class="backgroundWhite">
+                        <div class="slds-align_absolute-center slds-p-around_small">
+                            <lightning:buttonGroup >
+                                <div class="slds-p-around_xx-small">
+                                    <lightning:button variant="neutral" label="Cancel" onclick="{!c.closeModal}" />
+                                </div>
+                                <div class="slds-p-around_xx-small">
+                                    <lightning:button variant="brand" label="Next" onclick="{!c.createRecord}" />
+                                </div>
+                            </lightning:buttonGroup>
+                        </div>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </div>
+</aura:component>

@@ -1,0 +1,207 @@
+{
+  "d": [
+    {
+      "createdOn": {
+        "day": 12,
+        "displayText": "Aug 12, 2018 1:02:45 AM",
+        "hour": 1,
+        "minute": 2,
+        "month": 8,
+        "second": 45,
+        "timeZone": {
+          "displayText": "(UTC-7:00) US Mountain Standard Time",
+          "ianaName": "America/Phoenix",
+          "offsetDisplayText": "",
+          "uri": "urn:replicon:time-zone:america-phoenix"
+        },
+        "valueInUtc": {
+          "day": 12,
+          "hour": 8,
+          "millisecond": 243,
+          "minute": 2,
+          "month": 8,
+          "second": 45,
+          "year": 2018
+        },
+        "year": 2018
+      },
+      "customFields": [],
+      "dateRange": {
+        "endDate": {
+          "day": 18,
+          "month": 8,
+          "year": 2018
+        },
+        "startDate": {
+          "day": 12,
+          "month": 8,
+          "year": 2018
+        }
+      },
+      "dueDate": {
+        "day": 18,
+        "month": 8,
+        "year": 2018
+      },
+      "extensionFieldValues": [],
+      "noticeExplicitlyAccepted": false,
+      "owner": {
+        "displayText": "Employee1, Test",
+        "loginName": "temployee1",
+        "slug": "temployee1",
+        "uri": "urn:replicon-tenant:levementum:user:1"
+      },
+      "slug": ".temployee1/2018-8-12",
+      "statusUri": "urn:replicon:timesheet-status:open",
+      "timeAllocations": [
+        {
+          "activity": {
+            "displayText": "P3 - Development",
+            "name": "P3 - Development",
+            "uri": "urn:replicon-tenant:levementum:activity:8"
+          },
+          "billingRate": null,
+          "breakType": null,
+          "comments": "Test Comments",
+          "correlatedTimeOffUri": null,
+          "correlatedTimePunchUri": null,
+          "customFieldValues": [
+            {
+              "customField": {
+                "displayText": "Task ID",
+                "groupUri": "urn:replicon-tenant:levementum:custom-field-group:9d46e47b-a0df-40db-8c42-4dd3accd813e",
+                "name": "Task ID",
+                "uri": "urn:replicon-tenant:levementum:user-defined-field:72fac065-99cf-48dc-9b6c-f4331024cea3"
+              },
+              "customFieldType": {
+                "displayText": null,
+                "uri": "urn:replicon:custom-field-type:text"
+              },
+              "text": ""
+            },
+            {
+              "customField": {
+                "displayText": "TID Test",
+                "groupUri": "urn:replicon-tenant:levementum:custom-field-group:9d46e47b-a0df-40db-8c42-4dd3accd813e",
+                "name": "TID Test",
+                "uri": "urn:replicon-tenant:levementum:user-defined-field:544c0e64-8718-4dc2-aeda-27912a1d1e88"
+              },
+              "customFieldType": {
+                "displayText": null,
+                "uri": "urn:replicon:custom-field-type:text"
+              },
+              "text": ""
+            }
+          ],
+          "date": {
+            "day": 1,
+            "month": 1,
+            "year": 2018
+          },
+          "duration": {
+            "hours": 1,
+            "microseconds": 0,
+            "milliseconds": 0,
+            "minutes": 30,
+            "seconds": 0
+          },
+          "project": {
+            "displayText": "Test Project",
+            "name": "Test Project",
+            "slug": "test-project",
+            "uri": "urn:replicon-tenant:levementum:project:1154"
+          },
+          "task": {
+            "displayText": "Test Task",
+            "uri": "urn:replicon-tenant:levementum:task:1"
+          },
+          "timeOffType": null,
+          "uri": "urn:replicon-tenant:levementum:time-allocation:test1",
+          "user": {
+            "displayText": "Employee1, Test",
+            "loginName": "temployee1",
+            "slug": "temployee1",
+            "uri": "urn:replicon-tenant:levementum:user:1"
+          }
+        },
+		{
+          "activity": {
+            "displayText": "P3 - Development",
+            "name": "P3 - Development",
+            "uri": "urn:replicon-tenant:levementum:activity:8"
+          },
+          "billingRate": null,
+          "breakType": null,
+          "comments": "Test Comments",
+          "correlatedTimeOffUri": null,
+          "correlatedTimePunchUri": null,
+          "customFieldValues": [
+            {
+              "customField": {
+                "displayText": "Task ID",
+                "groupUri": "urn:replicon-tenant:levementum:custom-field-group:9d46e47b-a0df-40db-8c42-4dd3accd813e",
+                "name": "Task ID",
+                "uri": "urn:replicon-tenant:levementum:user-defined-field:72fac065-99cf-48dc-9b6c-f4331024cea3"
+              },
+              "customFieldType": {
+                "displayText": null,
+                "uri": "urn:replicon:custom-field-type:text"
+              },
+              "text": ""
+            },
+            {
+              "customField": {
+                "displayText": "TID Test",
+                "groupUri": "urn:replicon-tenant:levementum:custom-field-group:9d46e47b-a0df-40db-8c42-4dd3accd813e",
+                "name": "TID Test",
+                "uri": "urn:replicon-tenant:levementum:user-defined-field:544c0e64-8718-4dc2-aeda-27912a1d1e88"
+              },
+              "customFieldType": {
+                "displayText": null,
+                "uri": "urn:replicon:custom-field-type:text"
+              },
+              "text": ""
+            }
+          ],
+          "date": {
+            "day": 1,
+            "month": 1,
+            "year": 2018
+          },
+          "duration": {
+            "hours": 1,
+            "microseconds": 0,
+            "milliseconds": 0,
+            "minutes": 30,
+            "seconds": 0
+          },
+          "project": {
+            "displayText": "Test Project",
+            "name": "Test Project",
+            "slug": "test-project",
+            "uri": "urn:replicon-tenant:levementum:project:1155"
+          },
+          "task": {
+            "displayText": "Test Task",
+            "uri": "urn:replicon-tenant:levementum:task:1"
+          },
+          "timeOffType": null,
+          "uri": "urn:replicon-tenant:levementum:time-allocation:test2",
+          "user": {
+            "displayText": "Employee1, Test",
+            "loginName": "temployee1",
+            "slug": "temployee1",
+            "uri": "urn:replicon-tenant:levementum:user:1"
+          }
+        }
+	  ],
+     "timePunches": [],
+      "timesheetNotice": {
+        "description": null,
+        "timesheetNoticeOptionUris": [],
+        "title": null
+      },
+      "uri": "urn:replicon-tenant:levementum:timesheet:test1"
+    }
+  ]
+}

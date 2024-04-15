@@ -1,0 +1,21 @@
+{
+  "d": [ 
+  {
+      "timesheetForDate": {
+        "timesheet": {
+          "displayText": ".temployee1/2018-8-12",
+          "slug": ".temployee1/2018-8-12",
+          "uri": "urn:replicon-tenant:levementum:timesheet:test1"
+        },
+        "timesheetFormat": "urn:replicon:policy:timesheet:timesheet-format:standard-timesheet"
+      },
+      "timesheetGetError": null,
+      "timesheetOwner": {
+        "displayText": "Employee1, Test",
+        "loginName": "temployee1",
+        "slug": "temployee1",
+        "uri": "urn:replicon-tenant:levementum:user:1"
+      }
+    }
+  ]
+}

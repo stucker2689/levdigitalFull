@@ -1,0 +1,232 @@
+.stickyHeader{
+    position: -webkit-sticky; /* for Safari */
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    /*background: #000;
+    color: #FFF;*/
+}
+
+.stickyHeader2{
+  position: -webkit-sticky; /* for Safari */
+    position: sticky;
+    /*top: 0;*/
+    background: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    left: 0;
+    z-index: 1;
+}
+
+.stickyHeader3{
+  position: -webkit-sticky; /* for Safari */
+    position: sticky;
+    top: 0;
+    background: rgb(255, 255, 255);
+    color: rgb(0, 0, 0);
+    left: 0;
+    z-index: 3;
+}
+
+.stickyColumn{
+    position: -webkit-sticky; /* for Safari */
+    position: sticky;
+    /*top: 0;*/
+    /*left: 0;*/
+    background: #FFF;
+    border-right: 1px solid #CCC;
+    z-index: 1;
+}
+
+.projectAllocationBubble{
+  color:white;
+  background-color:rgb(0,122,201);/*rgb(61, 105, 216);*/
+  border-radius: 25px;
+}
+
+.unfocusedProjectAllocationBubble{
+  background-color:rgb(0,122,201);
+  border-radius: 25px;
+  font-size:0.95em;
+}
+
+.focusedProjectAllocationBubble{
+  background-color:rgb(0,122,201);
+  border-radius: 25px;
+  font-size:0.95em;
+}
+
+.otherAllocationBubble{
+  color:white;
+  background-color:rgb(117,117,117); /*rgb(90, 92, 96);*/
+  border-radius: 25px;
+}
+
+.timeOffAllocationBubble{
+  color:white;  
+  background-color:rgb(181,199,163);/*rgb(135, 120, 45);*/
+  border-radius: 25px;
+}
+
+.allocationDataBubble{
+  color:white;
+  border-radius: 25px;
+  font-size:0.9em;
+  /*border-style: solid;
+  border-color:white;*/
+}
+
+.overAllocatedSquare{
+  color:white;
+  background-color: #f3f2f2;
+  border:2px solid red;
+  font-size:0.9em;
+}
+
+.centerAlignTableData {
+  margin:auto;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.placeholderBackground{
+  background: repeating-linear-gradient(
+    -55deg,
+    rgb(255, 255, 255),
+    rgb(255, 255, 255) 10px,
+    rgb(215, 215, 215) 10px,
+    rgb(215, 215, 215) 20px
+  );
+}
+
+.budgetaryInfoGroup{
+  /*background-color: #f3f2f2;*/
+  border:2px solid #bebebe;
+  border-radius: 25px;
+  max-width: 100%;
+  width: auto;
+}
+
+input[type=number] {
+  width: 80%;
+  /*padding: 12px 20px;*/
+  /*padding: 0px 20px;*/
+  /*margin: 0px 10px 0px 10px;*/
+  /*box-sizing: border-box;*/
+  border: none;
+  /*background-color:rgb(61, 105, 216);*/
+  color: white;
+  font-size:0.95em;
+  text-align: center;
+}
+
+.inputBackgroundUnfocused{
+  /*background-color:rgb(61, 105, 216);*/
+  background-color:rgb(0,122,201);
+}
+
+.inputBackgroundFocused{
+  background-color:rgb(97, 153, 237);
+}
+
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+  width: 10px;
+  height: 10px;
+}
+
+.arrowColor{
+  --lwc-colorTextIconDefault: rgb(0, 0, 0);
+}
+
+.arrowColor2{
+  --lwc-colorTextIconDefault: rgb(255, 0, 0);
+}
+
+.tableContained{
+  height: 650px
+}
+
+.scrollLeftButtonStyle{
+  border:0px;
+  position:absolute;
+  bottom:10px;
+  /*left:189px;*/
+  width:25px;
+  height:620px;
+  background-color: #f3f2f2;
+  opacity:0.6;
+  z-index: 1
+}
+
+.scrollLeftExpandedButtonStyle{
+  border:0px;
+  position:absolute;
+  bottom:10px;
+  left:189px;
+  width:25px;
+  height:100%;
+  background-color: #f3f2f2;
+  opacity:0.6;
+  z-index: 1
+}
+
+
+.scrollRightButtonStyle{
+  border:0px;
+  position:absolute;
+  bottom:10px;
+  right:10px;
+  width:25px;
+  height:620px;
+  background-color: #f3f2f2;;
+  opacity:0.6;
+  z-index: 1;
+}
+
+.scrollRightExpandedButtonStyle{
+  border:0px;
+  position:absolute;
+  bottom:10px;
+  right:10px;
+  width:25px;
+  height:100%;
+  background-color: #f3f2f2;;
+  opacity:0.6;
+  z-index: 1;
+}
+
+.invisibleStyle{
+  border-radius: 25px;
+  font-size:0.95em;
+  opacity:0;
+}

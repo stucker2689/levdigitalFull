@@ -1,0 +1,7 @@
+.slds-table_cell-buffer tr>th:first-child {
+  padding-left: 0.5rem;
+}
+
+.slds-table_cell-buffer tr>th:first-child a {
+  padding-left: 0;
+}

@@ -1,0 +1,10 @@
+/*slds-modal__container{
+    width: 90% !important;
+    max-width: 90% !important;
+}*/
+.THIS .color .slds-input-field{
+    border: 1px solid red;
+}
+.THIS .redBorder{
+    border: 1px solid red;
+}

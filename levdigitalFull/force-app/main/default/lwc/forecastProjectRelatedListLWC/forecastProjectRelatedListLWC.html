@@ -1,0 +1,46 @@
+<template>
+    <div class="slds-card slds-card_boundary" style="background-color: #f3f2f2;">
+        <div class="slds-card__header slds-grid" style="padding-top:15px;padding-bottom:7px;">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                <span class="slds-icon_container slds-icon-standard-contact" title="contact">
+                    <lightning-icon icon-name="standard:partner_fund_request" title="Forecasts" size="small"></lightning-icon>
+                </span>
+                </div>
+                <div class="slds-media__body">
+                <h2 class="slds-card__header-title">
+                    <a class="slds-card__header-link slds-truncate" title="Forecast Related List" onclick={navigateToContactRelatedList}>
+                    <span>Forecasts ({forecastRecordCount})</span>
+                    </a>
+                </h2>
+                </div>
+                <div class="slds-no-flex" style="justify-content:center; display:flex;">
+                <!--<lightning-icon icon-name="utility:loop" title="Refresh" size="x-small" onclick={refresh}></lightning-icon>-->
+                <button class="slds-button slds-button_neutral" style="height:30px;" onclick={refresh}>
+                    <lightning-icon icon-name="utility:loop" title="Refresh" size="x-small"></lightning-icon>
+                </button>
+                </div>
+            </header>
+        </div>
+        <div class="slds-is-relative" style={tableheight}>
+                <template if:true={forecastTableLoading}>
+                    <lightning-spinner alternative-text="Loading" variant="brand" size="medium"></lightning-spinner>
+                </template>
+            <lightning-datatable
+                key-field="forecastId"
+                data={forecastData.data}
+                columns={columns}
+                is-loading={isForecastTableLoading}
+                hide-checkbox-column="true"
+                style="border:5px #C9C9C9;"
+                resize-column-disabled>
+            </lightning-datatable>
+        </div>            
+            <div class="slds-card__body"></div>
+            <footer class="slds-card__footer" style="background-color: #FFFFFF;">
+                <div style="height: auto; text-align:center">
+                    <a onclick={navigateToContactRelatedList}>View All</a>
+                </div>
+            </footer>
+    </div>
+</template>

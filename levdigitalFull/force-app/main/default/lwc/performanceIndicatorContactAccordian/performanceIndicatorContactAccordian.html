@@ -1,0 +1,34 @@
+<template>
+    
+    <lightning-accordion allow-multiple-sections-open>
+
+        <!--Target & Utilization Section-->
+        <lightning-accordion-section name="targetAndUtil" label="Target &amp; Utilization">
+            <br/>
+            <c-target-and-utilization-form record-id={recordId}></c-target-and-utilization-form>
+            <br/>
+            <c-contact-q-t-d-target-attainment-chart record-id={recordId}></c-contact-q-t-d-target-attainment-chart>
+            <br/>
+            <c-employee-project-actuals-vs-forecast-chart record-id={recordId}></c-employee-project-actuals-vs-forecast-chart>
+            <br/>
+            <c-contact-hours-per-quarter-datatable record-id={recordId}></c-contact-hours-per-quarter-datatable>
+            <br/>
+        </lightning-accordion-section>
+
+        <!--Certifications Section-->
+        <lightning-accordion-section name="certs" label="Certifications">
+            <br/>
+            <c-certification-contact-fields-form record-id={recordId}></c-certification-contact-fields-form>
+            <br/>
+            <c-certification-status-datatable record-id={recordId}></c-certification-status-datatable>
+            <br/>
+        </lightning-accordion-section>
+
+        <!--Reporting Section-->
+        <lightning-accordion-section name="reporting" label="Reporting">
+                <c-nonbill-or-concession-contact-datatable record-id={recordId}></c-nonbill-or-concession-contact-datatable>
+        </lightning-accordion-section>
+        
+</lightning-accordion>
+
+</template>

@@ -1,0 +1,22 @@
+<template>
+  <lightning-card title="Skills Matrix" icon-name="custom:custom63">
+    <div slot="actions">
+      <lightning-button label="Save" slot="actions" onclick={handleSave} disabled={buttonDisabled}></lightning-button>
+      <lightning-button label="Cancel" slot="actions" onclick={handleCancel} disabled={buttonDisabled}></lightning-button>
+    </div>
+    <template if:true={loaded}>
+      <lightning-accordion allow-multiple-sections-open>
+        <template if:true={data} id="skillTable">
+          <template for:each={data} for:item="matrixData">
+            <lightning-accordion-section key={matrixData.category} name={matrixData.category} label={matrixData.category}>
+              <c-skills-matrix-contact-table row-data={matrixData.rows} row-value={matrixData.rows.value} onrating={handleChange} onfocus={handleChange}></c-skills-matrix-contact-table> <!--</c-skills-matrix-contact-table>onrating={handleChange} onfocus={handleChange}></c-skills-matrix-contact-table-->
+            </lightning-accordion-section>
+          </template>
+        </template>
+      </lightning-accordion>
+    </template>
+    <template if:false={loaded}>
+      <lightning-spinner alternative-text="Loading"></lightning-spinner>
+    </template>
+  </lightning-card>
+</template>

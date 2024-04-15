@@ -1,0 +1,48 @@
+.THIS {
+    
+}
+.THIS .kanbanContainerDiv{
+    display: -webkit-flex; 
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-align-items: flex-start;
+    -ms-flex-align: start;
+    align-items: flex-start;
+    -webkit-align-content: flex-start;
+    -ms-flex-line-pack: start;
+    align-content: flex-start;
+    overflow-x: auto;
+    padding-left: .3rem;
+    padding-right: .3rem;
+}
+.THIS.cPageHeader{
+	border-bottom : 0px !important;
+}
+.THIS .cardClass{
+   background-color: rgb(255, 255, 255);
+}
+.THIS .slds-card__body{
+    margin-bottom: 0;
+}
+.THIS .refreshSpin svg{
+    -webkit-animation: rotate .4s;
+}
+.THIS.exampleHolder{
+    position: relative;
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}
+/*
+.THIS .boardHeaderTitle{
+	font-weight: 700;
+}
+.THIS .boardHeaderTitle:hover{
+    text-decoration: underline;
+    color: #0070d2;
+}
+.THIS .cPointer{
+    cursor:pointer;
+}
+*/
+/*adjusting help text position*/

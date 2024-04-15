@@ -1,0 +1,71 @@
+<aura:component>
+
+    <aura:attribute name="pickvalue" type="string"/>
+    <aura:attribute name="backgroundColor" type="string"/>
+    <aura:attribute name="pickvalueLength" type="integer"/>
+    <aura:attribute name="recsMap" type="object"/>
+    <aura:attribute name="recsMapTwo" type="object"/>
+    <aura:attribute name="summaryMap" type="object"/>
+    <aura:attribute name="kanbanField" type="string"/>
+    <aura:attribute name="fldList" type="string"/>
+    <aura:attribute name="recs" type="list"/>
+    <aura:attribute name="recsTwo" type="list"/>
+    <aura:attribute name="summary" type="Integer"/>
+    <aura:attribute name="rsFld" type="string"/>
+    <aura:attribute name="kanbanHeight" type="integer"/>
+    <aura:attribute name="rollupNumber" type="integer"/>
+    <aura:attribute name="recordCount" type="Integer"/>
+    <aura:attribute name="columnHeaderColor" type="String"/>
+    <aura:attribute name="KanbanRecords" type = "Object"/>
+    <aura:attribute name="KanbanRecordMap" type = "Map"/>
+    <aura:attribute name="KanbanRollups" type="Object"/>
+    <aura:attribute name="RollupAmount" type="Integer"/>
+    <aura:attribute name="sortIcon" type="String" default="down"/>
+    <aura:attribute name="sortFlip" type="Boolean" default="false"/>
+    <aura:attribute name="SprintView" type="Boolean" default="false"/>
+    <aura:attribute name="sprintWeekView" type="Boolean" default="false"/>
+    <aura:attribute name="KanbanView" type="String" />
+    <aura:attribute name="IsOpsView" type="Boolean"/>
+
+    <aura:attribute name="ownerFilter" type="list"/>
+    <aura:attribute name="ownerUserIdtoNameMap" type="map"/>
+
+    <aura:attribute name="psumval" type="Integer" default='0'/>
+
+    <aura:attribute name="firstTimeRendered" type="boolean" default="false"/>
+
+    <aura:handler name="init" value="this" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.KanbanRecords}" action="{!c.recordsChanged}"/>
+    <aura:registerEvent name="kanbanChildChanged" type="c:KanbanEvt"/>
+    <ltng:require scripts="{!$Resource.staticKanbanjs}" afterScriptsLoaded="{!c.sLoaded}"/> 
+
+
+    <div class="stageaa" label="Div"> 
+        <!--<h1 class= "pathType" style = "{! 'background-olor: ' + v.columnHeaderColor}">-->
+        <h1 class= "pathType">
+            <aura:if isTrue="{!v.sprintWeekView}">
+                    <span class="stageName">
+                        <b>Sprint Week of: &nbsp;<lightning:formattedDateTime value="{!v.pickvalue}" timeZone="UTC" /></b>
+                    </span>&nbsp;
+                <aura:set attribute="else">
+                   <b> <span class="stageName">{!v.pickvalue}</span></b> &nbsp;
+                </aura:set>
+            </aura:if>
+            <span class="stageLen">({!v.recs.length})</span>
+            <span class="stageIcon slds-p-left_small">
+                <lightning:buttonIcon class="whiteColor" iconName="{! 'utility:' +  v.sortIcon}" variant="bare-inverse" onclick="{! c.handleSortColumn }" alternativeText="Sort by Submitted Date" title="Sort2" size="small"/>
+            </span>
+        </h1>
+        <p aura:id="cup" class="summaryClass slds-truncate">{!v.RollupAmount}</p>
+        <ul aura:id="hckCol" ondrop="{!c.drop}" ondragover="{!c.allowDrop}" class="slds-has-dividers_around-space dropZone" data-Pick-Val="{!v.pickvalue}" style="height:600px;">
+            
+            <aura:iteration var="objRecord" items="{!v.recs}" indexVar="recPos">
+                <li class="slds-item slds-m-around_small isEditable" draggable="true" ondragstart="{!c.drag}" id="{!objRecord}" value="{!recPos}">
+                    <c:CustomKanbanCard firstTimeRendered="{!v.firstTimeRendered}" rec="{!objRecord}" recPos="{!recPos}" aura:id="recCards" SprintView="{!v.SprintView}" IsOpsView="{!v.IsOpsView}"/>
+                </li>
+            </aura:iteration>
+        </ul>
+    </div>
+
+
+</aura:component>

@@ -1,0 +1,71 @@
+/* (c) FinancialForce.com */
+
+@page 
+{
+    size: 21.0cm 29.7cm;
+    margin-top: 1.0cm;
+    margin-left: 1.0cm;
+    margin-right: 1.0cm;
+    margin-bottom: 1.0cm;
+}
+
+table
+{
+	page-break-inside:auto 
+}
+
+tr
+{
+	page-break-inside:avoid; 
+	page-break-after:auto 
+}
+td, th,
+.ffrgridtitlerightd, .ffrgridtitleleftd, .ffrgridtitleleftd, 
+.ffrgridcalcd, .ffrgridcalclabeld, .ffrgridrowd, .ffrgridsumd, .ffrgridsumlabeld, 
+.ffrsubtotald, .ffrsubtotallabeld, .ffrgrandsumd, .ffrgrandsumlabeld, .ffrgridrowlabeld
+{
+	font-family: Arial, Helvetica, sans-serif, "Times New Roman";
+	font-size: 7pt;
+}
+h1.ffrtitle
+{
+  font-family: Arial, Helvetica, sans-serif, "Times New Roman";
+  font-size: 10px;
+}
+
+h1.ffrname, h2.ffrtitle, h2.ffrname
+{
+  font-family: Arial, Helvetica, sans-serif, "Times New Roman";
+  font-size: 9px;
+}
+
+h1.ffrdescription, h2.ffrdescription,.ffrpromptd,.ffrgridrowd,.ffrgridrowlabeld,.ffrprompts{
+  font-family: Arial, Helvetica, sans-serif, "Times New Roman";
+  font-size: 7.5px;
+}
+
+.ffrgrid,.ffrgridd,.ffrgrids,.ffrgridnotfullpage,.ffrgridnotfullpageborder
+{
+  font-family: Arial, Helvetica, sans-serif, "Times New Roman";
+}
+.ffrgridspacer,.ffrgridspacer2,.ffrrowspacer2,.ffrcolumnspacer2,.ffrgridspacer3,.ffrrowspacer3,.ffrcolumnspacer3,.ffrgridspacerd,.ffrrowspacerd,.ffrcolumnspacerd,.ffrgridspacers,.ffrrowspacers,.ffrcolumnspacers
+{
+  font-size: 0px;
+  border: 0px;
+  padding: 1px;
+}
+
+
+.ffrwhiteonwhite,.ffrtextsmallleft,.ffrtextsmallright,.ffrcalcsums,.ffrcalcsumlabels,.ffrgridsums,.ffrgridsumlabels
+{
+  font-family: Arial, Helvetica, sans-serif, "Times New Roman";
+  font-size: 7.5px;
+  font-weight: normal;
+}
+
+.ffrnoclassdefined,.ffrtextsmallleftbold,.ffrtextsmallrightbold,.ffrpromptvalued,.ffrgridtitlerightd,.ffrgridtitleleftd,.ffrgridcalcd,.ffrgridcalclabeld,.ffrgridsumd,.ffrgridsumlabeld,.ffrcalcsumd,.ffrcalcsumlabeld,.ffrsubtotald,.ffrsubtotallabeld,.ffrgrandsumd,.ffrgrandsumlabeld,.ffrpromptvalues,.ffrgridtitlerights,.ffrgridtitlelefts,.ffrgridcalcs,.ffrgridcalclabels,.ffrsubtotals,.ffrsubtotallabels,.ffrgrandsums,.ffrgrandsumlabels
+{
+  font-family: Arial, Helvetica, sans-serif, "Times New Roman";
+  font-size: 7.5px;
+  font-weight: bold;
+}

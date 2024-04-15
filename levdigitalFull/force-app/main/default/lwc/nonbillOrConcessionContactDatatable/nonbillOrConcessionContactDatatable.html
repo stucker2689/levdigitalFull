@@ -1,0 +1,30 @@
+<template>
+    <lightning-card  icon-name="standard:business_hours" class="my-card slds-card_boundary">
+        <h1 slot="title" >Nonbill / Concession Requests for Staffed Projects</h1>
+        <template if:true={nonbillOrConcessionCases}>
+            <template if:true={allowScroll}>
+                <div style="height: 250px;">
+                    <lightning-datatable
+                        key-field="workId"
+                        data={nonbillOrConcessionCases}
+                        columns={columns}
+                        hide-checkbox-column="true">
+                    </lightning-datatable>
+                </div>
+            </template>
+            <template if:false={allowScroll}>
+                <lightning-datatable
+                        key-field="workId"
+                        data={nonbillOrConcessionCases}
+                        columns={columns}
+                        hide-checkbox-column="true">
+                    </lightning-datatable>
+            </template>
+        </template>                
+        <template if:true={error}>
+            No Non-Bill or Concession Cases for any Projects that this Contact is active on.
+        </template>
+    </lightning-card> 
+
+
+</template>

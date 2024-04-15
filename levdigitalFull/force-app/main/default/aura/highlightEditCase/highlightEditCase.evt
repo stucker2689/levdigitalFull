@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION" description="Event template">
+    <aura:attribute name="RecordToEdit" type="Object"/>
+    <aura:attribute name="editViewClosed" type="Boolean"/>
+</aura:event>
